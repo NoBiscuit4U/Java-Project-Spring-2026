@@ -18,14 +18,19 @@ public class User {
 		switch(key.toLowerCase()){
 		default:
 			return "N/A";
+		break;
 		case "name":
 			return this.m_name;
+		break;
 		case "id":
 			return this.m_id;
+		break;
 		case "password":
 			return this.m_password;
+		break;
 		case "email":
 			return this.m_email;
+		break;
 		}
 	}
 	
