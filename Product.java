@@ -18,19 +18,14 @@ public class Product {
 		switch(key.toLowerCase()){
 		default:
 			return "N/A";
-		break;
 		case "name":
 			return this.m_name;
-		break;
 		case "id":
 			return this.m_id;
-		break;
 		case "cost":
 			return this.m_cost;
-		break;
 		case "nutrition":
 			return this.m_nutrit_value;
-		break;
 		}
 	}
 	
@@ -52,3 +47,4 @@ public class Product {
 	}
 	
 }
+
