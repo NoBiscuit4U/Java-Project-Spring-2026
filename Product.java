@@ -1,5 +1,6 @@
+import java.io.Serializable;
 
-public class Product {
+public class Product implements Serializable{
 	private String m_name;
 	private String m_id;
 	private String m_cost;
@@ -47,4 +48,3 @@ public class Product {
 	}
 	
 }
-
