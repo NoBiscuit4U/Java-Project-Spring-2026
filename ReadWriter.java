@@ -44,6 +44,7 @@ public class ReadWriter {
 		
 		switch(target_table){
 		//Make Constants For Table Names
+		//TODO: WAMPSERVER
 			case "pdct":
 				if(scope_all) {
 					ArrayList<Object> bulk_return=new ArrayList<Object>();
