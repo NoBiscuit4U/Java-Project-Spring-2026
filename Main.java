@@ -1,9 +1,6 @@
 public class Main {
 	public static void main(String[] args) {
-		ReadWriter rw=new ReadWriter(Constants.fp_cons.m_product_strg);
-
-		rw.appendFile(new Product("TEST1","1000","1000","NUTRITION"));
-		
-		System.out.println(rw.readFile());
+		ReadWriter rw=new ReadWriter("root","","rst_data");
+		System.out.println(rw.runQuery("select","select *from ",Constants.table_query_cons.m_usr_table_qry,true));
 	} 
 }

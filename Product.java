@@ -2,49 +2,49 @@ import java.io.Serializable;
 
 public class Product implements Serializable{
 	private String m_name;
-	private String m_id;
-	private String m_cost;
+	private int m_id;
+	private double m_cost;
 	private String m_nutrit_value;
 	
 	//private PdctOptions m_options;
 	
-	public Product(String name,String id,String cost,String nutrit_value) {
+	public Product(String name,int id,double cost,String nutrit_value) {
 		this.m_name=name;
 		this.m_id=id;
 		this.m_cost=cost;
 		this.m_nutrit_value=nutrit_value;
 	}
 	
-	public String getInfo(String key){
-		switch(key.toLowerCase()){
-		default:
-			return "N/A";
-		case "name":
-			return this.m_name;
-		case "id":
-			return this.m_id;
-		case "cost":
-			return this.m_cost;
-		case "nutrition":
-			return this.m_nutrit_value;
-		}
+	public String getName(){
+		return this.m_name;
 	}
-	
-	public void setInfo(String key,String val){
-		switch(key.toLowerCase()){
-		case "name":
-			this.m_name=val;
-		break;
-		case "id":
-			this.m_id=val;
-		break;
-		case "cost":
-			this.m_cost=val;
-		break;
-		case "email":
-			this.m_nutrit_value=val;
-		break;
-		}
+
+	public void setName(String name){
+		this.m_name=name;
+	}
+
+	public int getID(){
+		return this.m_id;
+	}
+
+	public void setID(int id){
+		this.m_id=id;
+	}
+
+	public double getCost(){
+		return this.m_cost;
+	}
+
+	public void setCost(double cost){
+		this.m_cost=cost;
+	}
+
+	public String getNuritLabel(){
+		return this.m_nutrit_value;
+	}
+
+	public void setNuritLabel(String nutrit_value){
+		this.m_nutrit_value=nutrit_value;
 	}
 	
 }

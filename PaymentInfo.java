@@ -1,4 +1,3 @@
-package Classwork22;
 
 public class PaymentInfo {
 	private int m_cardnum,m_cvv,m_zipcode;

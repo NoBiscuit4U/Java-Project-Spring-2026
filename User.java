@@ -2,49 +2,39 @@ import java.io.Serializable;
 
 public class User implements Serializable{
 	private String m_name;
-	private String m_id;
-	private String m_password;
+	private int m_id;
 	private String m_email;
 	
 	private PaymentInfo m_payinfo;
 	
-	public User(String name,String id,String password,String email) {
+	public User(String name,int id,String email) {
 		this.m_name=name;
 		this.m_id=id;
-		this.m_password=password;
 		this.m_email=email;
 	}
-	
-	public String getInfo(String key){
-		switch(key.toLowerCase()){
-		default:
-			return "N/A";
-		case "name":
-			return this.m_name;
-		case "id":
-			return this.m_id;
-		case "password":
-			return this.m_password;
-		case "email":
-			return this.m_email;
-		}
+
+	public String getName(){
+		return this.m_name;
 	}
-	
-	public void setInfo(String key,String val){
-		switch(key.toLowerCase()){
-		case "name":
-			this.m_name=val;
-		break;
-		case "id":
-			this.m_id=val;
-		break;
-		case "password":
-			this.m_password=val;
-		break;
-		case "email":
-			this.m_email=val;
-		break;
-		}
+
+	public void setName(String name){
+		this.m_name=name;
+	}
+
+	public int getID(){
+		return this.m_id;
+	}
+
+	public void setID(int id){
+		this.m_id=id;
+	}
+
+	public String getEmail(){
+		return this.m_email;
+	}
+
+	public void setEmail(String email){
+		this.m_email=email;
 	}
 	
 	public void setPayInfo(int cardnum,int cvv,int zipcode,String expir_date,String home_add) {

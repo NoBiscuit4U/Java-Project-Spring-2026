@@ -1,4 +1,3 @@
-package Classwork22;
 import java.io.Serializable;
 
 abstract class RootObject{

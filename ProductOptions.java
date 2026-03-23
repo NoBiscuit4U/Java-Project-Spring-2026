@@ -1,4 +1,3 @@
-package Classwork22;
 import java.util.HashMap;
 
 public class ProductOptions{
