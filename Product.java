@@ -5,14 +5,16 @@ public class Product implements Serializable{
 	private int m_id;
 	private double m_cost;
 	private String m_nutrit_value;
+	private String m_img;
 	
 	//private PdctOptions m_options;
 	
-	public Product(String name,int id,double cost,String nutrit_value) {
+	public Product(String name,int id,double cost,String nutrit_value,String img) {
 		this.m_name=name;
 		this.m_id=id;
 		this.m_cost=cost;
 		this.m_nutrit_value=nutrit_value;
+		this.m_img=img;
 	}
 	
 	public String getName(){
@@ -45,6 +47,14 @@ public class Product implements Serializable{
 
 	public void setNuritLabel(String nutrit_value){
 		this.m_nutrit_value=nutrit_value;
+	}
+
+	public String getImg(){
+		return this.m_img;
+	}
+
+	public void setImg(String img){
+		this.m_img=img;
 	}
 	
 }
