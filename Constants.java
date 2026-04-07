@@ -22,5 +22,8 @@ public class Constants {
 
 	public static final class preset_querys{
 		public static final String m_get_unique_pass="SELECT * FROM %s WHERE ID = ";
+		public static final String m_delete_obj="SELECT * FROM %s WHERE ID = ";
+		public static final String m_insert_user="INSERT INTO %s (`Name`, `ID`, `Email`, `Password`) VALUES (?,?,?,?)";
+		public static final String m_update_user="UPDATE %s SET Name = ?, ID = ?, Email = ?, Password = ? WHERE ID = ";
 	}
 }

@@ -12,9 +12,14 @@ public class UserManager {
                                     Constants.table_query_cons.m_usr_table_qry,false).get(0);
     }
 
-     private String getPassword(int ID){
+    private String getPassword(int ID){
         return (String) m_rw.runQuery("select_pass",Constants.preset_querys.m_get_unique_pass+Integer.toString(ID),
                                     Constants.table_query_cons.m_usr_table_qry,false).get(0);
+    }
+
+    public void updateUser(ArrayList<Object> params){
+        m_rw.runQuery("update",Constants.preset_querys.m_update_user+Integer.toString((int) params.get(1)),
+                    Constants.table_query_cons.m_usr_table_qry,params);
     }
 
     public boolean checkUserLogin(int ID,String pass){
