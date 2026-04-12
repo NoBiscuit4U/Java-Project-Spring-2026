@@ -1,4 +1,3 @@
-
 public class Constants {
 	public static final class fp_cons{
 		public static final String m_usr_strg="storage/usr_strg.dat";

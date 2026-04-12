@@ -37,8 +37,8 @@ public class User implements Serializable{
 		this.m_email=email;
 	}
 	
-	public void setPayInfo(int cardnum,int cvv,int zipcode,String expir_date,String home_add) {
-		this.m_payinfo=new PaymentInfo(cardnum,cvv,zipcode,expir_date,this.m_name,home_add);
+	public void setPayInfo(int id, int cardnum,int cvv,int zipcode,String expir_date,String home_add) {
+		this.m_payinfo=new PaymentInfo(id,cardnum,cvv,zipcode,expir_date,this.m_name,home_add);
 	}
 	
 	public PaymentInfo getPayInfo() {

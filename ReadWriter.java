@@ -7,6 +7,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
+import Constants;
+
 public class ReadWriter {
 	private static String m_root_url = "jdbc:mysql://localhost:3306/";
 	private String m_username;
@@ -65,7 +67,8 @@ public class ReadWriter {
 		}catch(SQLException e){
 			System.out.println("SQL EXCEPTION: "+e.getMessage());
 		}catch(Exception e){
-			System.out.println("RUN QUERY ERROR: "+e.getMessage());
+			System.out.println("RUN QUERY ERROR: "+e.getMessage()+" ");
+			e.printStackTrace();
 		}
 		
 		return new ArrayList<Object>();

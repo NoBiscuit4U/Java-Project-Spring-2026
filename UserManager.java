@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 
+import Constants;
+
 public class UserManager {
     private ReadWriter m_rw;
 
@@ -29,5 +31,17 @@ public class UserManager {
             System.out.println(e);
             return false;
         }
+    }
+
+    public void createUser(ArrayList<Object> params){
+        try{
+            this.getUnique((int) params.get(1));
+            System.out.println("USER ALREADY EXISTS ID: "+(int) params.get(1));
+
+        }catch(Exception e){
+            m_rw.runQuery("insert into",Constants.preset_querys.m_insert_user+Integer.toString((int) params.get(1)),
+                    Constants.table_query_cons.m_usr_table_qry,params);
+        }
+
     }
 }
