@@ -118,31 +118,59 @@ public class ReadWriter {
 		rs.next();
 		
 		switch(target_table){
-			case "products":
-				if(scope_all) {
-					while(rs.next()) {
+			case Constants.table_query_cons.kpdct_table_qry:
+				if(scope_all){
+					while(rs.next()){
 						returnObj.add(new Product(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
 										rs.getDouble(Constants.obj_query_cons.kcost_qry),rs.getString(Constants.obj_query_cons.knutrit_qry),
 										rs.getString(Constants.obj_query_cons.kimg_qry)));
 					}
 					
-				}else {
+				}else{
 					returnObj.add(new Product(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
 										rs.getDouble(Constants.obj_query_cons.kcost_qry),rs.getString(Constants.obj_query_cons.knutrit_qry),
 										rs.getString(Constants.obj_query_cons.kimg_qry)));
 				}
 				
 				break;
-			case "users":
-				if(scope_all) {
-					while(rs.next()) {
+			case Constants.table_query_cons.kusr_table_qry:
+				if(scope_all){
+					while(rs.next()){
 						returnObj.add(new User(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
 												rs.getString(Constants.obj_query_cons.kemail_qry)));
 					}
 				
-				}else {
+				}else{
 					returnObj.add(new User(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
 											rs.getString(Constants.obj_query_cons.kemail_qry)));
+				}
+				
+				break;
+			case Constants.table_query_cons.kpdct_option_table_qry:
+				if(scope_all){
+					while(rs.next()){
+						returnObj.add(new ProductOptions(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getString(Constants.obj_query_cons.koptions_qry)));
+					}
+				
+				}else{
+					returnObj.add(new ProductOptions(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getString(Constants.obj_query_cons.koptions_qry)));
+				}
+				
+				break;
+			case Constants.table_query_cons.kpay_info_qry:
+				if(scope_all){
+					while(rs.next()){
+						returnObj.add(new PaymentInfo(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getInt(Constants.obj_query_cons.kcardnum_qry),
+														rs.getInt(Constants.obj_query_cons.kcvv_qry),rs.getInt(Constants.obj_query_cons.kzipcode_qry),
+														rs.getString(Constants.obj_query_cons.kexpir_qry),rs.getString(Constants.obj_query_cons.kname_qry),
+														rs.getString(Constants.obj_query_cons.kaddress_qry)));
+					}
+				
+				}else{
+					returnObj.add(new PaymentInfo(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getInt(Constants.obj_query_cons.kcardnum_qry),
+														rs.getInt(Constants.obj_query_cons.kcvv_qry),rs.getInt(Constants.obj_query_cons.kzipcode_qry),
+														rs.getString(Constants.obj_query_cons.kexpir_qry),rs.getString(Constants.obj_query_cons.kname_qry),
+														rs.getString(Constants.obj_query_cons.kaddress_qry)));
 				}
 				
 				break;

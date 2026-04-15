@@ -20,6 +20,12 @@ public class Constants {
 		public static final String kemail_qry="Email";
 		public static final String kpassword_qry="Password";
 		public static final String kimg_qry="Img";
+		public static final String koptions_qry="Img";
+		public static final String kcvv_qry="CVV";
+		public static final String kcardnum_qry="CardNum";
+		public static final String kzipcode_qry="Zipcode";
+		public static final String kexpir_qry="Expiration";
+		public static final String kaddress_qry="Address";
 	}
 
 	public static final class table_query_cons{
@@ -30,9 +36,8 @@ public class Constants {
 	}
 
 	public static final class preset_querys{
-		public static final String kget_unique_pass="SELECT * FROM %s WHERE ID = ";
-		public static final String kget_all_products="SELECT * FROM %s";
-		public static final String kget_all_pdct_options="SELECT * FROM %s";
+		public static final String kget_unique="SELECT * FROM %s WHERE ID = ";
+		public static final String kget_all="SELECT * FROM %s";
 		public static final String kdelete_obj="DELETE * FROM %s WHERE ID = ";
 		public static final String kinsert_user="INSERT INTO %s (`Name`, `ID`, `Email`, `Password`) VALUES (?,?,?,?)";
 		public static final String kupdate_user="UPDATE %s SET Name = ?, ID = ?, Email = ?, Password = ? WHERE ID = ";

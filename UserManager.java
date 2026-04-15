@@ -8,8 +8,13 @@ public class UserManager {
     }
 
     private User getUnique(int ID){
-        return (User) m_rw.runQuery(Constants.query_cons.kselect,Constants.preset_querys.kget_unique_pass+Integer.toString(ID),
+        User usr=(User) m_rw.runQuery(Constants.query_cons.kselect,Constants.preset_querys.kget_unique+Integer.toString(ID),
                                     Constants.table_query_cons.kusr_table_qry,false).get(0);
+        try{
+            usr.setPayInfo(this.getPaymentInfo(usr.getID()));
+        }catch(Exception e){}
+
+        return usr;
     }
 
     private void deleteUser(int ID){
@@ -18,8 +23,13 @@ public class UserManager {
     }
 
     private String getPassword(int ID){
-        return (String) m_rw.runQuery(Constants.query_cons.kselect_pass,Constants.preset_querys.kget_unique_pass+Integer.toString(ID),
+        return (String) m_rw.runQuery(Constants.query_cons.kselect_pass,Constants.preset_querys.kget_unique+Integer.toString(ID),
                                     Constants.table_query_cons.kusr_table_qry,false).get(0);
+    }
+
+    private PaymentInfo getPaymentInfo(int ID){
+        return (PaymentInfo) m_rw.runQuery(Constants.query_cons.kselect,Constants.preset_querys.kget_unique+Integer.toString(ID),
+                                    Constants.table_query_cons.kpay_info_qry,false).get(0);
     }
 
     public void updateUser(ArrayList<Object> params){
