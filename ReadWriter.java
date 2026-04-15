@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 
-import Constants;
-
 public class ReadWriter {
 	private static String m_root_url = "jdbc:mysql://localhost:3306/";
 	private String m_username;
@@ -39,9 +37,9 @@ public class ReadWriter {
 				case "select_pass":
 					return this.singleQueryPass(full_query,target_table,scope_all);
 				case "select":
-					return this.singleQuery(full_query,target_table,scope_all);
+					return this.singleQueryExecute(full_query,target_table,scope_all);
 				case "delete":
-					return this.singleQuery(full_query,target_table,scope_all);
+					return this.singleQueryUpdate(full_query,target_table);
 			}
 		}catch(ClassNotFoundException e){
 			System.out.println("CLASS EXCEPTION: "+e.getMessage());
@@ -97,8 +95,20 @@ public class ReadWriter {
 
 		return returnObj;
 	}
+
+	private ArrayList<Object> singleQueryUpdate(String full_query,String target_table) throws ClassNotFoundException,SQLException{
+		ArrayList<Object> returnObj=new ArrayList<Object>();
+
+		String format_query=String.format(full_query,target_table);
+		System.out.println(format_query);
+		PreparedStatement ps=m_con.prepareStatement(format_query);
+
+		ps.executeUpdate();
+
+		return returnObj;
+	}
 	
-	private ArrayList<Object> singleQuery(String full_query,String target_table,boolean scope_all) throws ClassNotFoundException,SQLException{
+	private ArrayList<Object> singleQueryExecute(String full_query,String target_table,boolean scope_all) throws ClassNotFoundException,SQLException{
 		ArrayList<Object> returnObj=new ArrayList<Object>();
 		
 		String format_query=String.format(full_query,target_table);
@@ -111,28 +121,28 @@ public class ReadWriter {
 			case "products":
 				if(scope_all) {
 					while(rs.next()) {
-						returnObj.add(new Product(rs.getString(Constants.obj_query_cons.m_name_qry),rs.getInt(Constants.obj_query_cons.m_id_qry),
-										rs.getDouble(Constants.obj_query_cons.m_cost_qry),rs.getString(Constants.obj_query_cons.m_nutrit_qry),
-										rs.getString(Constants.obj_query_cons.m_img_qry)));
+						returnObj.add(new Product(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
+										rs.getDouble(Constants.obj_query_cons.kcost_qry),rs.getString(Constants.obj_query_cons.knutrit_qry),
+										rs.getString(Constants.obj_query_cons.kimg_qry)));
 					}
 					
 				}else {
-					returnObj.add(new Product(rs.getString(Constants.obj_query_cons.m_name_qry),rs.getInt(Constants.obj_query_cons.m_id_qry),
-										rs.getDouble(Constants.obj_query_cons.m_cost_qry),rs.getString(Constants.obj_query_cons.m_nutrit_qry),
-										rs.getString(Constants.obj_query_cons.m_img_qry)));
+					returnObj.add(new Product(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
+										rs.getDouble(Constants.obj_query_cons.kcost_qry),rs.getString(Constants.obj_query_cons.knutrit_qry),
+										rs.getString(Constants.obj_query_cons.kimg_qry)));
 				}
 				
 				break;
 			case "users":
 				if(scope_all) {
 					while(rs.next()) {
-						returnObj.add(new User(rs.getString(Constants.obj_query_cons.m_name_qry),rs.getInt(Constants.obj_query_cons.m_id_qry),
-												rs.getString(Constants.obj_query_cons.m_email_qry)));
+						returnObj.add(new User(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
+												rs.getString(Constants.obj_query_cons.kemail_qry)));
 					}
 				
 				}else {
-					returnObj.add(new User(rs.getString(Constants.obj_query_cons.m_name_qry),rs.getInt(Constants.obj_query_cons.m_id_qry),
-											rs.getString(Constants.obj_query_cons.m_email_qry)));
+					returnObj.add(new User(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
+											rs.getString(Constants.obj_query_cons.kemail_qry)));
 				}
 				
 				break;
@@ -150,7 +160,7 @@ public class ReadWriter {
 		ResultSet rs=ps.executeQuery(format_query);
 		rs.next();
 		
-		returnObj.add(rs.getString(Constants.obj_query_cons.m_password_qry));
+		returnObj.add(rs.getString(Constants.obj_query_cons.kpassword_qry));
 		return returnObj;
 	}
 }

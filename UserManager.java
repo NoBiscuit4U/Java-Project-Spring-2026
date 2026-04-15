@@ -1,7 +1,5 @@
 import java.util.ArrayList;
 
-import Constants;
-
 public class UserManager {
     private ReadWriter m_rw;
 
@@ -10,18 +8,23 @@ public class UserManager {
     }
 
     private User getUnique(int ID){
-        return (User) m_rw.runQuery("select",Constants.preset_querys.m_get_unique_pass+Integer.toString(ID),
-                                    Constants.table_query_cons.m_usr_table_qry,false).get(0);
+        return (User) m_rw.runQuery(Constants.query_cons.kselect,Constants.preset_querys.kget_unique_pass+Integer.toString(ID),
+                                    Constants.table_query_cons.kusr_table_qry,false).get(0);
+    }
+
+    private void deleteUser(int ID){
+        m_rw.runQuery(Constants.query_cons.kdelete,Constants.preset_querys.kdelete_obj+Integer.toString(ID),
+                                    Constants.table_query_cons.kusr_table_qry,false);
     }
 
     private String getPassword(int ID){
-        return (String) m_rw.runQuery("select_pass",Constants.preset_querys.m_get_unique_pass+Integer.toString(ID),
-                                    Constants.table_query_cons.m_usr_table_qry,false).get(0);
+        return (String) m_rw.runQuery(Constants.query_cons.kselect_pass,Constants.preset_querys.kget_unique_pass+Integer.toString(ID),
+                                    Constants.table_query_cons.kusr_table_qry,false).get(0);
     }
 
     public void updateUser(ArrayList<Object> params){
-        m_rw.runQuery("update",Constants.preset_querys.m_update_user+Integer.toString((int) params.get(1)),
-                    Constants.table_query_cons.m_usr_table_qry,params);
+        m_rw.runQuery(Constants.query_cons.kupdate,Constants.preset_querys.kupdate_user+Integer.toString((int) params.get(1)),
+                    Constants.table_query_cons.kusr_table_qry,params);
     }
 
     public boolean checkUserLogin(int ID,String pass){
@@ -39,8 +42,8 @@ public class UserManager {
             System.out.println("USER ALREADY EXISTS ID: "+(int) params.get(1));
 
         }catch(Exception e){
-            m_rw.runQuery("insert into",Constants.preset_querys.m_insert_user+Integer.toString((int) params.get(1)),
-                    Constants.table_query_cons.m_usr_table_qry,params);
+            m_rw.runQuery(Constants.query_cons.kinsert,Constants.preset_querys.kinsert_user+Integer.toString((int) params.get(1)),
+                    Constants.table_query_cons.kusr_table_qry,params);
         }
 
     }

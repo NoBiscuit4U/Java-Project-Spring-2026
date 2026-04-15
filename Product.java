@@ -7,7 +7,7 @@ public class Product implements Serializable{
 	private String m_nutrit_value;
 	private String m_img;
 	
-	//private PdctOptions m_options;
+	private ProductOptions m_options;
 	
 	public Product(String name,int id,double cost,String nutrit_value,String img) {
 		this.m_name=name;
@@ -55,6 +55,10 @@ public class Product implements Serializable{
 
 	public void setImg(String img){
 		this.m_img=img;
+	}
+
+	public void setPdctOptions(ProductOptions options){
+		this.m_options=options;
 	}
 	
 }
