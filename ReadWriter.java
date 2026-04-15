@@ -25,9 +25,11 @@ public class ReadWriter {
 			m_con=DriverManager.getConnection(this.m_root_url+this.m_DBName,this.m_username,this.m_password);
 			System.out.println("Connection Established successfully");
 		}catch(ClassNotFoundException e){
-			System.out.println(e);
+			System.out.println("CLASS ERROR: "+e);
+			e.printStackTrace();
 		}catch(SQLException e){
-			System.out.println(e);
+			System.out.println("SQL ERROR: "+e);
+			e.printStackTrace();
 		}
 	}
 
@@ -43,13 +45,16 @@ public class ReadWriter {
 			}
 		}catch(ClassNotFoundException e){
 			System.out.println("CLASS EXCEPTION: "+e.getMessage());
+			e.printStackTrace();
 		}catch(SQLException e){
 			System.out.println("SQL EXCEPTION: "+e.getMessage());
+			e.printStackTrace();
 		}catch(Exception e){
 			System.out.println("RUN QUERY ERROR: "+e.getMessage());
+			e.printStackTrace();
 		}
 		
-		return new ArrayList<Object>();
+		return new ArrayList<>();
 	}
 
 	public ArrayList<Object> runQuery(String query_type,String full_query,String target_table,ArrayList<Object> params) {
@@ -62,14 +67,16 @@ public class ReadWriter {
 			}
 		}catch(ClassNotFoundException e){
 			System.out.println("CLASS EXCEPTION: "+e.getMessage());
+			e.printStackTrace();
 		}catch(SQLException e){
 			System.out.println("SQL EXCEPTION: "+e.getMessage());
+			e.printStackTrace();
 		}catch(Exception e){
 			System.out.println("RUN QUERY ERROR: "+e.getMessage()+" ");
 			e.printStackTrace();
 		}
 		
-		return new ArrayList<Object>();
+		return new ArrayList<>();
 	}
 
 	private ArrayList<Object> paramQuery(String full_query,String target_table,ArrayList<Object> params) throws ClassNotFoundException,SQLException{

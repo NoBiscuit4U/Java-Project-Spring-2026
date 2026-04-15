@@ -15,7 +15,7 @@ public class ProductManager {
                                                     Constants.table_query_cons.kpdct_table_qry,false).get(0);
     }
 
-    public ArrayList<Product> getAllProducts(){
+    private ArrayList<Product> getAllProducts(){
         ArrayList<Product> pdct_arr=new ArrayList<Product>();
         ArrayList<Object> obj_pdcts=m_rw.runQuery(Constants.query_cons.kselect,Constants.preset_querys.kget_all,
                                                     Constants.table_query_cons.kpdct_table_qry,true);
