@@ -20,7 +20,7 @@ public class Constants {
 		public static final String kemail_qry="Email";
 		public static final String kpassword_qry="Password";
 		public static final String kimg_qry="Img";
-		public static final String koptions_qry="Img";
+		public static final String koptions_qry="Options";
 		public static final String kcvv_qry="CVV";
 		public static final String kcardnum_qry="CardNum";
 		public static final String kzipcode_qry="Zipcode";
