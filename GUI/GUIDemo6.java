@@ -1,26 +1,21 @@
+package GUI;
 
 
+// Changing the import statements to include all classes in the package
+import javax.swing.*;
+import java.awt.*;
 
-import javax.swing.JFrame;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JTextField;
-import javax.swing.JTextArea;
-
-// Imports the classes needed for organization
-import java.awt.BorderLayout;
-import java.awt.Container;
-
-// Imports code needed to "listen" for an event such as a button click. This allows user interaction.
+// need to grab the ones under .event speparatly
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 
 // Demonstrates the basic layout of a class that sets up the GUI with some basic functions.
-//This GUIDemo2 improves look by organizing the window using a flow layout.
+//This GUIDemo6 improves look by organizing the window using a JPanels.
 // A flow layout arranges the elements from left to right, then shifts any extra down to the next row.
-public class GUIDemo4 {
+public class GUIDemo6 {
 	// the variables needed to define the window.
 	private JFrame frame;
+	private JPanel panel;
 	private JTextField input;
 	private JTextArea ta;
 	private JLabel label; 
@@ -32,11 +27,11 @@ public class GUIDemo4 {
 	private int height;
 	
 	// Constructor
-	public GUIDemo4(int w, int h) {
+	public GUIDemo6(int w, int h) {
 		// Defines the features of the window
 		frame = new JFrame();
+		panel = new JPanel(new GridLayout(1,2));
 		label = new JLabel("Hello");
-		// can optionally put in a width of the text field (in columns) in the parethasisies (which I did)
 		input = new JTextField(10);
 		ta = new JTextArea("Hello.\nThis is a JTextArea!");
 		button1 = new JButton("CLICK ME");
@@ -53,18 +48,19 @@ public class GUIDemo4 {
 		
 		// accesses the innate frame of the window
 		Container cp = frame.getContentPane();
-		BorderLayout brdr = new BorderLayout();
-		cp.setLayout(brdr);
+		GridLayout grid = new GridLayout(2, 3);
+		cp.setLayout(grid);
 		frame.setSize(width, height);
 		frame.setTitle("GUI DEmo");
 		// Adds the elements to the container not the frame this time.
-		cp.add(input, BorderLayout.NORTH);
-		cp.add(label, BorderLayout.SOUTH);
-		cp.add(button1, BorderLayout.WEST);
-		//cp.add(button2, BorderLayout.EAST);
-		cp.add(ta, BorderLayout.CENTER);
-		//cp.add(button3);
-		//cp.add(button4);
+		cp.add(input);
+		cp.add(label);
+		cp.add(ta);
+		cp.add(button3);
+		cp.add(button4);
+		panel.add(button1);
+		panel.add(button2);
+		cp.add(panel);
 		// This means that the program stops when we close the window. 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// This sends the above code to the window so we can see it.

@@ -25,9 +25,11 @@ public class ReadWriter {
 			m_con=DriverManager.getConnection(this.m_root_url+this.m_DBName,this.m_username,this.m_password);
 			System.out.println("Connection Established successfully");
 		}catch(ClassNotFoundException e){
-			System.out.println(e);
+			System.out.println("CLASS ERROR: "+e);
+			e.printStackTrace();
 		}catch(SQLException e){
-			System.out.println(e);
+			System.out.println("SQL ERROR: "+e);
+			e.printStackTrace();
 		}
 	}
 
@@ -35,54 +37,58 @@ public class ReadWriter {
 		try{
 			switch(query_type) {
 				case "select_pass":
-					return this.selectQueryPass(full_query,target_table,scope_all);
+					return this.singleQueryPass(full_query,target_table,scope_all);
 				case "select":
-					return this.selectQuery(full_query,target_table,scope_all);
-				case "update":
-				break;
+					return this.singleQueryExecute(full_query,target_table,scope_all);
+				case "delete":
+					return this.singleQueryUpdate(full_query,target_table);
 			}
 		}catch(ClassNotFoundException e){
 			System.out.println("CLASS EXCEPTION: "+e.getMessage());
+			e.printStackTrace();
 		}catch(SQLException e){
 			System.out.println("SQL EXCEPTION: "+e.getMessage());
+			e.printStackTrace();
 		}catch(Exception e){
 			System.out.println("RUN QUERY ERROR: "+e.getMessage());
+			e.printStackTrace();
 		}
 		
-		return new ArrayList<Object>();
+		return new ArrayList<>();
 	}
 
-	public ArrayList<Object> runQuery(String query_type,String full_query,String target_table,int args,ArrayList<Object> params) {
+	public ArrayList<Object> runQuery(String query_type,String full_query,String target_table,ArrayList<Object> params) {
 		try{
 			switch(query_type) {
 				case "update":
-				break;
-				case "delete":
-				break;
+					return this.paramQuery(full_query,target_table,params);
 				case "insert into":
-					return this.insertQuery(full_query, target_table, args, params);
+					return this.paramQuery(full_query,target_table,params);
 			}
 		}catch(ClassNotFoundException e){
 			System.out.println("CLASS EXCEPTION: "+e.getMessage());
+			e.printStackTrace();
 		}catch(SQLException e){
 			System.out.println("SQL EXCEPTION: "+e.getMessage());
+			e.printStackTrace();
 		}catch(Exception e){
-			System.out.println("RUN QUERY ERROR: "+e.getMessage());
+			System.out.println("RUN QUERY ERROR: "+e.getMessage()+" ");
+			e.printStackTrace();
 		}
 		
-		return new ArrayList<Object>();
+		return new ArrayList<>();
 	}
 
-	private ArrayList<Object> insertQuery(String full_query,String target_table,int args,ArrayList<Object> params) throws ClassNotFoundException,SQLException{
+	private ArrayList<Object> paramQuery(String full_query,String target_table,ArrayList<Object> params) throws ClassNotFoundException,SQLException{
 		ArrayList<Object> returnObj=new ArrayList<Object>();
 
 		String format_query=String.format(full_query,target_table);
-
+		System.out.println(format_query);
 		PreparedStatement ps=m_con.prepareStatement(format_query);
 
 		for(Object obj:params){
 			if(obj instanceof String){
-				String n_obj=(String)obj;
+				String n_obj=(String) obj;
 				
 				ps.setString(params.indexOf(obj)+1,n_obj);
 			}else if(obj instanceof Integer){
@@ -96,8 +102,20 @@ public class ReadWriter {
 
 		return returnObj;
 	}
+
+	private ArrayList<Object> singleQueryUpdate(String full_query,String target_table) throws ClassNotFoundException,SQLException{
+		ArrayList<Object> returnObj=new ArrayList<Object>();
+
+		String format_query=String.format(full_query,target_table);
+		System.out.println(format_query);
+		PreparedStatement ps=m_con.prepareStatement(format_query);
+
+		ps.executeUpdate();
+
+		return returnObj;
+	}
 	
-	private ArrayList<Object> selectQuery(String full_query,String target_table,boolean scope_all) throws ClassNotFoundException,SQLException{
+	private ArrayList<Object> singleQueryExecute(String full_query,String target_table,boolean scope_all) throws ClassNotFoundException,SQLException{
 		ArrayList<Object> returnObj=new ArrayList<Object>();
 		
 		String format_query=String.format(full_query,target_table);
@@ -107,31 +125,59 @@ public class ReadWriter {
 		rs.next();
 		
 		switch(target_table){
-			case "products":
-				if(scope_all) {
-					while(rs.next()) {
-						returnObj.add(new Product(rs.getString(Constants.obj_query_cons.m_name_qry),rs.getInt(Constants.obj_query_cons.m_id_qry),
-										rs.getDouble(Constants.obj_query_cons.m_cost_qry),rs.getString(Constants.obj_query_cons.m_nutrit_qry),
-										rs.getString(Constants.obj_query_cons.m_img_qry)));
+			case Constants.table_query_cons.kpdct_table_qry:
+				if(scope_all){
+					while(rs.next()){
+						returnObj.add(new Product(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
+										rs.getDouble(Constants.obj_query_cons.kcost_qry),rs.getString(Constants.obj_query_cons.knutrit_qry),
+										rs.getString(Constants.obj_query_cons.kimg_qry)));
 					}
 					
-				}else {
-					returnObj.add(new Product(rs.getString(Constants.obj_query_cons.m_name_qry),rs.getInt(Constants.obj_query_cons.m_id_qry),
-										rs.getDouble(Constants.obj_query_cons.m_cost_qry),rs.getString(Constants.obj_query_cons.m_nutrit_qry),
-										rs.getString(Constants.obj_query_cons.m_img_qry)));
+				}else{
+					returnObj.add(new Product(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
+										rs.getDouble(Constants.obj_query_cons.kcost_qry),rs.getString(Constants.obj_query_cons.knutrit_qry),
+										rs.getString(Constants.obj_query_cons.kimg_qry)));
 				}
 				
 				break;
-			case "users":
-				if(scope_all) {
-					while(rs.next()) {
-						returnObj.add(new User(rs.getString(Constants.obj_query_cons.m_name_qry),rs.getInt(Constants.obj_query_cons.m_id_qry),
-												rs.getString(Constants.obj_query_cons.m_email_qry)));
+			case Constants.table_query_cons.kusr_table_qry:
+				if(scope_all){
+					while(rs.next()){
+						returnObj.add(new User(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
+												rs.getString(Constants.obj_query_cons.kemail_qry)));
 					}
 				
-				}else {
-					returnObj.add(new User(rs.getString(Constants.obj_query_cons.m_name_qry),rs.getInt(Constants.obj_query_cons.m_id_qry),
-											rs.getString(Constants.obj_query_cons.m_email_qry)));
+				}else{
+					returnObj.add(new User(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
+											rs.getString(Constants.obj_query_cons.kemail_qry)));
+				}
+				
+				break;
+			case Constants.table_query_cons.kpdct_option_table_qry:
+				if(scope_all){
+					while(rs.next()){
+						returnObj.add(new ProductOptions(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getString(Constants.obj_query_cons.koptions_qry)));
+					}
+				
+				}else{
+					returnObj.add(new ProductOptions(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getString(Constants.obj_query_cons.koptions_qry)));
+				}
+				
+				break;
+			case Constants.table_query_cons.kpay_info_qry:
+				if(scope_all){
+					while(rs.next()){
+						returnObj.add(new PaymentInfo(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getInt(Constants.obj_query_cons.kcardnum_qry),
+														rs.getInt(Constants.obj_query_cons.kcvv_qry),rs.getInt(Constants.obj_query_cons.kzipcode_qry),
+														rs.getString(Constants.obj_query_cons.kexpir_qry),rs.getString(Constants.obj_query_cons.kname_qry),
+														rs.getString(Constants.obj_query_cons.kaddress_qry)));
+					}
+				
+				}else{
+					returnObj.add(new PaymentInfo(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getInt(Constants.obj_query_cons.kcardnum_qry),
+														rs.getInt(Constants.obj_query_cons.kcvv_qry),rs.getInt(Constants.obj_query_cons.kzipcode_qry),
+														rs.getString(Constants.obj_query_cons.kexpir_qry),rs.getString(Constants.obj_query_cons.kname_qry),
+														rs.getString(Constants.obj_query_cons.kaddress_qry)));
 				}
 				
 				break;
@@ -140,7 +186,7 @@ public class ReadWriter {
 		return returnObj;
 	}
 
-	private ArrayList<Object> selectQueryPass(String full_query,String target_table,boolean scope_all) throws ClassNotFoundException,SQLException{
+	private ArrayList<Object> singleQueryPass(String full_query,String target_table,boolean scope_all) throws ClassNotFoundException,SQLException{
 		ArrayList<Object> returnObj=new ArrayList<Object>();
 		
 		String format_query=String.format(full_query,target_table);
@@ -149,7 +195,7 @@ public class ReadWriter {
 		ResultSet rs=ps.executeQuery(format_query);
 		rs.next();
 		
-		returnObj.add(rs.getString(Constants.obj_query_cons.m_password_qry));
+		returnObj.add(rs.getString(Constants.obj_query_cons.kpassword_qry));
 		return returnObj;
 	}
 }

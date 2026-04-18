@@ -1,15 +1,15 @@
+package GUI;
 
 
-// Basic frame
+
 import javax.swing.JFrame;
-// Button
 import javax.swing.JButton;
-// Allows for the creation of labels + text fields
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.JTextArea;
 
 // Imports the classes needed for organization
-import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.Container;
 
 // Imports code needed to "listen" for an event such as a button click. This allows user interaction.
@@ -19,10 +19,11 @@ import java.awt.event.ActionEvent;
 // Demonstrates the basic layout of a class that sets up the GUI with some basic functions.
 //This GUIDemo2 improves look by organizing the window using a flow layout.
 // A flow layout arranges the elements from left to right, then shifts any extra down to the next row.
-public class GUIDemo3 {
+public class GUIDemo5 {
 	// the variables needed to define the window.
 	private JFrame frame;
 	private JTextField input;
+	private JTextArea ta;
 	private JLabel label; 
 	private JButton button1;
 	private JButton button2;
@@ -32,12 +33,13 @@ public class GUIDemo3 {
 	private int height;
 	
 	// Constructor
-	public GUIDemo3(int w, int h) {
+	public GUIDemo5(int w, int h) {
 		// Defines the features of the window
 		frame = new JFrame();
 		label = new JLabel("Hello");
 		// can optionally put in a width of the text field (in columns) in the parethasisies (which I did)
 		input = new JTextField(10);
+		ta = new JTextArea("Hello.\nThis is a JTextArea!");
 		button1 = new JButton("CLICK ME");
 		button2 = new JButton("CLICK ME TOO");
 		button3 = new JButton("3");
@@ -52,8 +54,8 @@ public class GUIDemo3 {
 		
 		// accesses the innate frame of the window
 		Container cp = frame.getContentPane();
-		FlowLayout flow = new FlowLayout();
-		cp.setLayout(flow);
+		GridLayout grid = new GridLayout(2, 3);
+		cp.setLayout(grid);
 		frame.setSize(width, height);
 		frame.setTitle("GUI DEmo");
 		// Adds the elements to the container not the frame this time.
@@ -61,8 +63,9 @@ public class GUIDemo3 {
 		cp.add(label);
 		cp.add(button1);
 		cp.add(button2);
+		cp.add(ta);
 		cp.add(button3);
-		cp.add(button4);
+		//cp.add(button4);
 		// This means that the program stops when we close the window. 
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		// This sends the above code to the window so we can see it.
