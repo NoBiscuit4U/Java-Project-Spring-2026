@@ -59,6 +59,62 @@ class login_page{
 	}
 }
 
+class home_page{
+	// the variables needed to define the window.
+	private JFrame frame;
+	private JTextField login_name;
+	private JTextField login_password;	 
+	private JButton login_button;
+
+	
+	private String loginUserNameMaster = "The admin";
+	private String loginUserPasswordMaster = "SecurePassword123";
+	
+	// Constructor
+	public home_page() {
+		// Defines the features of the window
+		frame = new JFrame();
+		login_name = new JTextField("User Name");
+		login_password = new JTextField("Password");
+		login_button = new JButton("Login");
+	}
+
+	public JPanel setUpHomeGUI() {
+		JPanel loginPage = new JPanel();
+		GridLayout grid = new GridLayout(2, 2);
+		loginPage.setLayout(grid);
+		frame.setTitle("GUI DEmo");
+		loginPage.add(login_name);
+		loginPage.add(login_password);
+		loginPage.add(login_button);
+		return loginPage;
+		
+	}
+
+	public void setUpButtonListeners() {
+		ActionListener buttonListener = new ActionListener() {
+			@Override 
+			public void actionPerformed(ActionEvent ae) {
+				// Finds out what what event occurred
+				Object event_source = ae.getSource();
+				if (event_source == login_button) {
+					String loginName = login_name.getText();
+					String loginPassword = login_password.getText();	
+					if (loginName.equals(loginUserNameMaster) && loginPassword.equals(loginUserPasswordMaster)){
+						login_button.setText("true");
+					}
+						
+					login_name.setText("");
+					login_password.setText("");
+						
+				}
+					
+			}
+		};
+		login_button.addActionListener(buttonListener);
+	}
+}
+
 
 public class main_page{
 	private static ReadWriter m_rw=new ReadWriter("root","","rst_data");
@@ -94,7 +150,7 @@ public class main_page{
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setVisible(true);
         }
-        else if (whatPage == "mainPage") {
+        else if (whatPage == "homePage") {
         	
         }
      }
