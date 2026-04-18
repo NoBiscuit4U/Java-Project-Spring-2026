@@ -2,6 +2,7 @@ import java.util.ArrayList;
 
 public class UserManager {
     private ReadWriter m_rw;
+    private int session_id;
 
     public UserManager(ReadWriter rw){
         m_rw=rw;
@@ -37,9 +38,20 @@ public class UserManager {
                     Constants.table_query_cons.kusr_table_qry,params);
     }
 
+    public boolean checkAdmin(){
+        try{
+            this.getUnique(this.session_id);
+            return true;
+        }catch(Exception e){
+            return false;
+        }
+    }
+
     public boolean checkUserLogin(int ID,String pass){
         try{
-            return this.getPassword(ID).equals(pass);
+            boolean check=this.getPassword(ID).equals(pass);
+            this.session_id=ID;
+            return check;
         }catch(Exception e){
             System.out.println(e);
             return false;

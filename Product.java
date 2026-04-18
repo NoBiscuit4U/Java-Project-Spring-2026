@@ -1,4 +1,5 @@
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Product implements Serializable{
 	private String m_name;
@@ -15,6 +16,14 @@ public class Product implements Serializable{
 		this.m_cost=cost;
 		this.m_nutrit_value=nutrit_value;
 		this.m_img=img;
+	}
+
+	public Product(ArrayList<Object> params) {
+		this.m_name=(String) params.get(0);
+		this.m_id=(int) params.get(1);
+		this.m_cost=(double) params.get(2);
+		this.m_nutrit_value=(String) params.get(3);
+		this.m_img=(String) params.get(4);
 	}
 	
 	public String getName(){

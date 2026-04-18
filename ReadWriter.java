@@ -36,11 +36,11 @@ public class ReadWriter {
 	public ArrayList<Object> runQuery(String query_type,String full_query,String target_table,boolean scope_all) {
 		try{
 			switch(query_type) {
-				case "select_pass":
+				case Constants.query_cons.kselect_pass:
 					return this.singleQueryPass(full_query,target_table,scope_all);
-				case "select":
+				case Constants.query_cons.kselect:
 					return this.singleQueryExecute(full_query,target_table,scope_all);
-				case "delete":
+				case Constants.query_cons.kdelete:
 					return this.singleQueryUpdate(full_query,target_table);
 			}
 		}catch(ClassNotFoundException e){
@@ -194,7 +194,7 @@ public class ReadWriter {
 		PreparedStatement ps=m_con.prepareStatement(format_query);
 		ResultSet rs=ps.executeQuery(format_query);
 		rs.next();
-		
+
 		returnObj.add(rs.getString(Constants.obj_query_cons.kpassword_qry));
 		return returnObj;
 	}

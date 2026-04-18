@@ -1,24 +1,22 @@
-import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.swing.*;
 
 class login_page{
 	// the variables needed to define the window.
 	private JFrame frame;
-	private JTextField login_name;
+	private JTextField login_id;
 	private JTextField login_password;	 
 	private JButton login_button;
-
-	
-	private String loginUserNameMaster = "The admin";
-	private String loginUserPasswordMaster = "SecurePassword123";
+	private UserManager m_um;
 	
 	// Constructor
-	public login_page() {
+	public login_page(UserManager um) {
+		m_um=um;
 		// Defines the features of the window
 		frame = new JFrame();
-		login_name = new JTextField("User Name");
+		login_id = new JTextField("User ID");
 		login_password = new JTextField("Password");
 		login_button = new JButton("Login");
 	}
@@ -28,9 +26,10 @@ class login_page{
 		GridLayout grid = new GridLayout(2, 2);
 		loginPage.setLayout(grid);
 		frame.setTitle("GUI DEmo");
-		loginPage.add(login_name);
+		loginPage.add(login_id);
 		loginPage.add(login_password);
 		loginPage.add(login_button);
+		this.setUpButtonListeners();
 		return loginPage;
 		
 	}
@@ -41,14 +40,15 @@ class login_page{
 			public void actionPerformed(ActionEvent ae) {
 				// Finds out what what event occurred
 				Object event_source = ae.getSource();
+
 				if (event_source == login_button) {
-					String loginName = login_name.getText();
+					int loginID = Integer.parseInt(login_id.getText());
 					String loginPassword = login_password.getText();	
-					if (loginName.equals(loginUserNameMaster) && loginPassword.equals(loginUserPasswordMaster)){
+					if(m_um.checkUserLogin(loginID,loginPassword)){
 						login_button.setText("true");
 					}
 						
-					login_name.setText("");
+					login_id.setText("");
 					login_password.setText("");
 						
 				}
@@ -61,6 +61,9 @@ class login_page{
 
 
 public class main_page{
+	private static ReadWriter m_rw=new ReadWriter("root","","rst_data");
+	private static UserManager m_um=new UserManager(m_rw);
+	private static ProductManager m_pm=new ProductManager(m_rw);
 	
 	public static void main(String[] args) {
 		//boolean logged_in = false;
@@ -69,7 +72,7 @@ public class main_page{
 		
 		JFrame frame = new JFrame("Menu Bar Example");
 		Container cp = frame.getContentPane();
-        
+
         JMenuBar menuBar = new JMenuBar();
         JMenu fileMenu = new JMenu("File");
         
@@ -83,8 +86,9 @@ public class main_page{
         frame.setJMenuBar(menuBar);
         
         if (whatPage == "login") {
-        	login_page lg = new login_page();
+        	login_page lg = new login_page(m_um);
         	JPanel panel = lg.setUpLoginGUI();
+
         	cp.add(panel);
             frame.setSize(400, 300);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

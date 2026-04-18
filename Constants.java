@@ -40,6 +40,8 @@ public class Constants {
 		public static final String kget_all="SELECT * FROM %s";
 		public static final String kdelete_obj="DELETE * FROM %s WHERE ID = ";
 		public static final String kinsert_user="INSERT INTO %s (`Name`, `ID`, `Email`, `Password`) VALUES (?,?,?,?)";
+		public static final String kinsert_pdct="INSERT INTO %s (`Name`, `ID`, `Cost`, `NutritValue`, `Img`) VALUES (?,?,?,?)";
 		public static final String kupdate_user="UPDATE %s SET Name = ?, ID = ?, Email = ?, Password = ? WHERE ID = ";
+		public static final String kupdate_pdct="UPDATE %s SET Name = ?, ID = ?, Cost = ?, NutritValue = ?, Img = ? WHERE ID = ";
 	}
 }
