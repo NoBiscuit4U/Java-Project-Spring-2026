@@ -37,7 +37,9 @@ public class ReadWriter {
 		try{
 			switch(query_type) {
 				case Constants.query_cons.kselect_pass:
-					return this.singleQueryPass(full_query,target_table,scope_all);
+					return this.singleQueryPass(full_query,target_table);
+				case Constants.query_cons.kselect_admin_id:
+					return this.singleQueryAdminID(full_query,target_table);
 				case Constants.query_cons.kselect:
 					return this.singleQueryExecute(full_query,target_table,scope_all);
 				case Constants.query_cons.kdelete:
@@ -186,7 +188,7 @@ public class ReadWriter {
 		return returnObj;
 	}
 
-	private ArrayList<Object> singleQueryPass(String full_query,String target_table,boolean scope_all) throws ClassNotFoundException,SQLException{
+	private ArrayList<Object> singleQueryPass(String full_query,String target_table) throws ClassNotFoundException,SQLException{
 		ArrayList<Object> returnObj=new ArrayList<Object>();
 		
 		String format_query=String.format(full_query,target_table);
@@ -196,6 +198,19 @@ public class ReadWriter {
 		rs.next();
 
 		returnObj.add(rs.getString(Constants.obj_query_cons.kpassword_qry));
+		return returnObj;
+	}
+
+	private ArrayList<Object> singleQueryAdminID(String full_query,String target_table) throws ClassNotFoundException,SQLException{
+		ArrayList<Object> returnObj=new ArrayList<Object>();
+		
+		String format_query=String.format(full_query,target_table);
+		
+		PreparedStatement ps=m_con.prepareStatement(format_query);
+		ResultSet rs=ps.executeQuery(format_query);
+		rs.next();
+
+		returnObj.add(rs.getInt(Constants.obj_query_cons.kid_qry));
 		return returnObj;
 	}
 }
