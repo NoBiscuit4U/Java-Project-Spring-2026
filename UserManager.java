@@ -2,17 +2,20 @@ import java.util.ArrayList;
 
 public class UserManager {
     private ReadWriter m_rw;
+    private int session_id;
 
     public UserManager(ReadWriter rw){
         m_rw=rw;
     }
 
-    private User getUnique(int ID){
+    private User getUnique(int ID,boolean getPayInfo){
         User usr=(User) m_rw.runQuery(Constants.query_cons.kselect,Constants.preset_querys.kget_unique+Integer.toString(ID),
                                     Constants.table_query_cons.kusr_table_qry,false).get(0);
-        try{
-            usr.setPayInfo(this.getPaymentInfo(usr.getID()));
-        }catch(Exception e){}
+        if(getPayInfo){
+            try{
+                usr.setPayInfo(this.getPaymentInfo(usr.getID()));
+            }catch(Exception e){}
+        }
 
         return usr;
     }
@@ -37,9 +40,21 @@ public class UserManager {
                     Constants.table_query_cons.kusr_table_qry,params);
     }
 
+    public boolean checkAdmin(){
+        try{
+            this.m_rw.runQuery(Constants.query_cons.kselect_admin_id,Constants.preset_querys.kget_unique+Integer.toString(this.session_id),
+                                    Constants.table_query_cons.kadmin_ids_qry,false).get(0);
+            return true;
+        }catch(Exception e){
+            return false;
+        }
+    }
+
     public boolean checkUserLogin(int ID,String pass){
         try{
-            return this.getPassword(ID).equals(pass);
+            boolean check=this.getPassword(ID).equals(pass);
+            this.session_id=ID;
+            return check;
         }catch(Exception e){
             System.out.println(e);
             return false;
@@ -48,7 +63,7 @@ public class UserManager {
 
     public void createUser(ArrayList<Object> params){
         try{
-            this.getUnique((int) params.get(1));
+            this.getUnique((int) params.get(1),false);
             System.out.println("USER ALREADY EXISTS ID: "+(int) params.get(1));
 
         }catch(Exception e){

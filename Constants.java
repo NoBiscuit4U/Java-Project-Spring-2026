@@ -7,6 +7,7 @@ public class Constants {
 	public static final class query_cons{
 		public static final String kselect="select";
 		public static final String kselect_pass="select pass";
+		public static final String kselect_admin_id="select admin_id";
 		public static final String kinsert="insert into";
 		public static final String kupdate="update";
 		public static final String kdelete="delete";
@@ -33,6 +34,7 @@ public class Constants {
 		public static final String kpdct_option_table_qry="product_options";
 		public static final String kusr_table_qry="users";
 		public static final String kpay_info_qry="payment_info";
+		public static final String kadmin_ids_qry="admin_ids";
 	}
 
 	public static final class preset_querys{
@@ -40,6 +42,8 @@ public class Constants {
 		public static final String kget_all="SELECT * FROM %s";
 		public static final String kdelete_obj="DELETE * FROM %s WHERE ID = ";
 		public static final String kinsert_user="INSERT INTO %s (`Name`, `ID`, `Email`, `Password`) VALUES (?,?,?,?)";
+		public static final String kinsert_pdct="INSERT INTO %s (`Name`, `ID`, `Cost`, `NutritValue`, `Img`) VALUES (?,?,?,?)";
 		public static final String kupdate_user="UPDATE %s SET Name = ?, ID = ?, Email = ?, Password = ? WHERE ID = ";
+		public static final String kupdate_pdct="UPDATE %s SET Name = ?, ID = ?, Cost = ?, NutritValue = ?, Img = ? WHERE ID = ";
 	}
 }
