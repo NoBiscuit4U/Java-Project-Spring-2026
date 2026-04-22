@@ -1,4 +1,4 @@
-import java.util.ArrayList;
+import java.util.*;
 
 public class ProductManager {
     private ReadWriter m_rw;
@@ -31,8 +31,7 @@ public class ProductManager {
             System.out.println("PRODUCT ALREADY EXISTS ID: "+(int) params.get(1));
 
         }catch(Exception e){
-            m_rw.runQuery(Constants.query_cons.kinsert,Constants.preset_querys.kinsert_pdct+Integer.toString((int) params.get(1)),
-                    Constants.table_query_cons.kpdct_table_qry,params);
+            m_rw.runQuery(Constants.query_cons.kinsert,Constants.preset_querys.kinsert_pdct,Constants.table_query_cons.kpdct_table_qry,params);
 
             this.m_productlist=this.getAllProducts();
         }
@@ -65,6 +64,10 @@ public class ProductManager {
         return pdct_arr;
     }
 
+    public void runDynamicUpdate(HashMap<String,Object> params,int ID){
+        m_rw.runQuery(Constants.query_cons.kupdateDynamic,Constants.preset_querys.kupdate_pdct_dynamic+Integer.toString(ID),Constants.table_query_cons.kpdct_table_qry,params);
+    }
+
     public ArrayList<String> getDisplayListAll(){
         ArrayList<String> returnList=new ArrayList<String>();
         this.m_productlist.forEach(pdct -> returnList.add(pdct.getName()));
@@ -74,6 +77,16 @@ public class ProductManager {
     public ArrayList<String> getDisplayListSearch(String req){
         ArrayList<String> returnList=new ArrayList<String>();
         
+        String[] tokens=req.split(" ");
+
+        for(Product pdct:this.m_productlist){
+            for(String token:tokens){
+                if(pdct.getName().toLowerCase().contains(token.toLowerCase())){
+                    returnList.add(pdct.getName());
+                }
+            }
+        }
+
         return returnList;
     }
 }

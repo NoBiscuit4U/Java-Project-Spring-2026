@@ -67,7 +67,7 @@ public class UserManager {
             System.out.println("USER ALREADY EXISTS ID: "+(int) params.get(1));
 
         }catch(Exception e){
-            m_rw.runQuery(Constants.query_cons.kinsert,Constants.preset_querys.kinsert_user+Integer.toString((int) params.get(1)),
+            m_rw.runQuery(Constants.query_cons.kinsert,Constants.preset_querys.kinsert_user,
                     Constants.table_query_cons.kusr_table_qry,params);
         }
 

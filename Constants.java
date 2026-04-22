@@ -10,6 +10,8 @@ public class Constants {
 		public static final String kselect_admin_id="select admin_id";
 		public static final String kinsert="insert into";
 		public static final String kupdate="update";
+		public static final String kinsertDynamic="insert dynamic";
+		public static final String kupdateDynamic="update dynamic";
 		public static final String kdelete="delete";
 	}
 
@@ -42,8 +44,29 @@ public class Constants {
 		public static final String kget_all="SELECT * FROM %s";
 		public static final String kdelete_obj="DELETE * FROM %s WHERE ID = ";
 		public static final String kinsert_user="INSERT INTO %s (`Name`, `ID`, `Email`, `Password`) VALUES (?,?,?,?)";
-		public static final String kinsert_pdct="INSERT INTO %s (`Name`, `ID`, `Cost`, `NutritValue`, `Img`) VALUES (?,?,?,?)";
+		public static final String kinsert_pdct="INSERT INTO %s (`Name`, `ID`, `Cost`, `NutritValue`, `Img`) VALUES (?,?,?,?,?)";
 		public static final String kupdate_user="UPDATE %s SET Name = ?, ID = ?, Email = ?, Password = ? WHERE ID = ";
 		public static final String kupdate_pdct="UPDATE %s SET Name = ?, ID = ?, Cost = ?, NutritValue = ?, Img = ? WHERE ID = ";
+
+		public static final String kupdate_pdct_dynamic="INSERT INTO %s ? WHERE ID =";
+	}
+
+	public static final class dynamic_query{
+		public static final class insert{
+			public static final String kname= "`Name`";	
+			public static final String kid="`ID`";	
+			public static final String kcost="`Cost`";	
+			public static final String knutritValue="``NutritValue`";	
+			public static final String kimg="`Img`";
+			public static final String kvalues=" VALUES";
+		}
+
+		public static final class update{
+			public static final String kname= "Name = ?";	
+			public static final String kid="ID = ?";	
+			public static final String kcost="Cost = ?";	
+			public static final String knutritValue="`NutritValue = ?";	
+			public static final String kimg="`Img = ?";
+		}
 	}
 }

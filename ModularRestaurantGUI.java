@@ -1,40 +1,109 @@
-package GUI_Test;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 class login_page{
 	// the variables needed to define the window.
 	private JFrame frame;
-	private JTextField login_name;
+
+	private JLabel idLabel;
+	private JLabel passwordLabel;
+
+	private JTextField login_id;
 	private JTextField login_password;	 
 	private JButton login_button;
+	private JButton logout_button;
 
-	
-	private String loginUserNameMaster = "1";  //"The admin";
-	private String loginUserPasswordMaster = "1"; //"SecurePassword123";
+	private UserManager m_um;
+
+	private JPanel m_adminPanel;
+
+	private JPanel m_loginPanel;
+	private JPanel m_logoutPanel;
+
+	private JMenu m_menu;
+	private JButton m_adminButton;
+	private Container m_contain;
+
+	private boolean loggedIn=false;
 	
 	// Constructor
-	public login_page() {
+	public login_page(UserManager um,Container contain,JMenu menu,JButton adminButton) {
 		// Defines the features of the window
 		frame = new JFrame();
-		login_name = new JTextField("User Name");
-		login_password = new JTextField("Password");
+		login_id = new JTextField(10);
+		login_password = new JTextField(10);
 		login_button = new JButton("Login");
+		logout_button = new JButton("Logout");
+
+		this.idLabel=new JLabel("User ID: ");
+		this.passwordLabel=new JLabel("User Password: ");
+		
+		this.m_contain=contain;
+		this.m_um=um;
+		this.m_menu=menu;
+		this.m_adminButton=adminButton;
+
+		this.setUpLoginButtonListeners();
+		this.setUpLogoutButtonListeners();
 	}
 
-	public JPanel setUpLoginGUI() {
-		JPanel loginPage = new JPanel();
-		GridLayout grid = new GridLayout(2, 2);
-		loginPage.setLayout(grid);
-		frame.setTitle("GUI DEmo");
-		loginPage.add(login_name);
-		loginPage.add(login_password);
-		loginPage.add(login_button);
-		return loginPage;
-		
+	public void setUpGUIs() {
+		m_loginPanel = new JPanel();
+		GridBagConstraints constraints=null;
+		GridBagLayout grid = new GridBagLayout();
+		m_loginPanel.setLayout(grid);
+
+		constraints=new GridBagConstraints();
+		constraints.gridx=2;
+		constraints.gridy=0;
+		constraints.insets=new Insets(10,1,10,10);
+		m_loginPanel.add(idLabel,constraints);
+
+		constraints=new GridBagConstraints();
+		constraints.gridx=2;
+		constraints.gridy=0;
+		constraints.insets=new Insets(10,10,1,10);
+		m_loginPanel.add(login_id,constraints);
+
+		constraints=new GridBagConstraints();
+		constraints.gridx=2;
+		constraints.gridy=1;
+		constraints.insets=new Insets(10,1,10,10);
+		m_loginPanel.add(passwordLabel,constraints);
+
+		constraints=new GridBagConstraints();
+		constraints.gridx=2;
+		constraints.gridy=1;
+		constraints.insets=new Insets(10,10,1,10);
+		m_loginPanel.add(login_password,constraints);
+
+		constraints=new GridBagConstraints();
+		constraints.gridx=2;
+		constraints.gridy=2;
+		constraints.insets=new Insets(10,10,10,10);
+		m_loginPanel.add(login_button,constraints);
+
+		m_logoutPanel = new JPanel();
+		grid=new GridBagLayout();
+		m_logoutPanel.setLayout(grid);
+
+		constraints=new GridBagConstraints();
+		constraints.gridx=0;
+		constraints.gridy=0;
+		constraints.insets=new Insets(10,10,10,10);
+		m_logoutPanel.add(logout_button,constraints);
+	}
+
+	public JPanel getCurrentPanel(){
+		if(!loggedIn){
+			return m_loginPanel;
+		}else{
+			return m_logoutPanel;
+		}
 	}
 
 	public void setUpLoginButtonListeners() {
@@ -44,21 +113,49 @@ class login_page{
 				// Finds out what what event occurred
 				Object event_source = ae.getSource();
 				if (event_source == login_button) {
-					String loginName = login_name.getText();
+					int loginID = Integer.parseInt(login_id.getText());
 					String loginPassword = login_password.getText();	
-					if (loginName.equals(loginUserNameMaster) && loginPassword.equals(loginUserPasswordMaster)){
-						login_button.setText("true");
+					if(m_um.checkUserLogin(loginID,loginPassword)){
+						if(m_um.checkAdmin()){
+							m_menu.add(m_adminButton);
+						}
 						
-					}
-						
-					login_name.setText("");
-					login_password.setText("");
-						
-				}
-					
+						loggedIn=true;
+
+						m_contain.removeAll();
+						m_contain.add(getCurrentPanel());
+						m_contain.revalidate();
+						m_contain.repaint();
+
+						login_id.setText("");
+						login_password.setText("");
+					}	
+				}	
 			}
 		};
 		login_button.addActionListener(loginButtonListener);
+	}
+
+	public void setUpLogoutButtonListeners() {
+		ActionListener logoutButtonListener = new ActionListener() {
+			@Override 
+			public void actionPerformed(ActionEvent ae) {
+				// Finds out what what event occurred
+				Object event_source = ae.getSource();
+				if (event_source == logout_button) {
+					loggedIn=false;
+
+					m_menu.remove(m_adminButton);
+
+					m_contain.removeAll();
+					m_contain.add(getCurrentPanel());
+					m_contain.revalidate();
+					m_contain.repaint();
+
+				}	
+			}
+		};
+		logout_button.addActionListener(logoutButtonListener);
 	}
 }
 
@@ -67,21 +164,25 @@ class admin_page extends JPanel{
 	private JFrame frame;	 
 	private JButton admin_submit_button;
 	private JTextField idField;
-	private JTextField imageLinkField;
+	private JTextField imgField;
 	private JTextField nameField;
 	private JTextField costField;
-	private JTextField nutritionalValField;
+	private JTextField nutritValField;
 	private GridBagConstraints gbc = new GridBagConstraints();
 	private JComboBox<String> selectOptions;
+
+	private ProductManager m_pm;
 	
 	// Constructor
-	public admin_page() {
+	public admin_page(ProductManager pm) {
+		m_pm=pm;
+
 		// Defines the features of the window
 		frame = new JFrame();
 		setLayout(new GridBagLayout());
 		idField = new JTextField("ID Text Field");
-		imageLinkField = new JTextField("Image Link");
-		nutritionalValField = new JTextField("Nutritional Value");
+		imgField = new JTextField("Image Link");
+		nutritValField = new JTextField("Nutritional Value");
 		nameField = new JTextField("Name");
 		costField = new JTextField("Price/Cost");
 		admin_submit_button = new JButton("Submit");
@@ -114,11 +215,11 @@ class admin_page extends JPanel{
 		
 		gbc.gridx = 3;
 		gbc.gridy = 1;
-		adminPage.add(nutritionalValField, gbc);
+		adminPage.add(nutritValField, gbc);
 		
 		gbc.gridx = 4;
 		gbc.gridy = 1;
-		adminPage.add(imageLinkField, gbc);
+		adminPage.add(imgField, gbc);
 		
 		gbc.gridx = 3;
 		gbc.gridy = 2;
@@ -128,6 +229,29 @@ class admin_page extends JPanel{
 		
 	}
 
+	public HashMap<String,Object> getMap(){
+		HashMap<String,Object> map=new HashMap<String,Object>();
+
+
+		if(!idField.getText().equals("")){
+			map.put(Constants.obj_query_cons.kid_qry,Integer.parseInt(idField.getText()));
+		}
+		if(!nameField.getText().equals("")){
+			map.put(Constants.obj_query_cons.kname_qry,nameField.getText());
+		}
+		if(!costField.getText().equals("")){
+			map.put(Constants.obj_query_cons.kcost_qry,Double.parseDouble(costField.getText()));
+		}
+		if(!nutritValField.getText().equals("")){
+			map.put(Constants.obj_query_cons.knutrit_qry,nutritValField.getText());
+		}
+		if(!imgField.getText().equals("")){
+			map.put(Constants.obj_query_cons.kimg_qry,imgField.getText());
+		}
+
+		return map;
+	}
+
 	public void setUpAdminButtonListeners() {
 		ActionListener adminButtonListener = new ActionListener() {
 			@Override 
@@ -135,16 +259,22 @@ class admin_page extends JPanel{
 				// Finds out what what event occurred
 				Object event_source = ae.getSource();
 				if (event_source == admin_submit_button) {
-					
-				}
-				else if (event_source == selectOptions) {
-					if (selectOptions.equals("Add")) {
-						
+					if (selectOptions.getSelectedItem().equals("Add")) {
+						if(!nameField.getText().equals("") && !idField.getText().equals("") && !costField.getText().equals("")
+							&& !nutritValField.getText().equals("") && !imgField.getText().equals("")){                   
+							m_pm.createProduct(new ArrayList<Object>(){{
+								add(nameField.getText());
+								add(Integer.parseInt(idField.getText()));
+								add(Double.parseDouble(costField.getText()));
+								add(nutritValField.getText());
+								add(imgField.getText());
+							}});
+						}
 					}
-					else if (selectOptions.equals("Update")) {
-						
+					else if (selectOptions.getSelectedItem().equals("Update")) {
+						m_pm.runDynamicUpdate(getMap(),Integer.parseInt(idField.getText()));
 					}
-					else if (selectOptions.equals("Delete")) {
+					else if (selectOptions.getSelectedItem().equals("Delete")) {
 						
 					}
 				}
@@ -237,20 +367,24 @@ class home_page extends JPanel{
 	private JTextField mainPageBlurb;
 	private String userGivenMainPageBlurb;
 	private JButton searchButton;
-	private JButton goToProductsButton;
 	private GridBagConstraints gbc = new GridBagConstraints();
 	private JTextArea searchProducts;
-	private JScrollPane scrollPane;
+	private ProductList allProductsList;
+	private ProductList filteredProductsList;
+	private JLabel allProducts;
+
+	private ProductManager m_pm;
 	
 	// Constructor
-	public home_page() {
+	public home_page(ProductManager pm) {
+		m_pm=pm;
+
 		// Defines the features of the window
 		frame = new JFrame();
 		setLayout(new GridBagLayout());
 		
-		searchProducts = new JTextArea(10, 15);
-		scrollPane = new JScrollPane(searchProducts);
-		searchProducts.setEditable(false);
+		searchProducts = new JTextArea(1,15);
+		filteredProductsList = new ProductList(new ArrayList<String>());
 		
 		// This is where we can have the code grab the title from the storage
 		userGivenAppName = "Title";
@@ -258,13 +392,17 @@ class home_page extends JPanel{
 		
 		userGivenMainPageBlurb = "Text Blurb";
 		mainPageBlurb = new JTextField(userGivenMainPageBlurb);
+		mainPageBlurb.setEditable(false);
 		
 		searchButton = new JButton("Search");
-		goToProductsButton = new JButton("Search All Products");
-		
+		allProducts=new JLabel("All Products");
+
+		allProductsList = new ProductList(this.m_pm.getDisplayListAll());
+
+		setUpButtonListeners();
 	}
 
-	public JPanel setUpHomeGUI() {
+	public JPanel setUpGUI() {
 		JPanel homePage = new JPanel(new GridBagLayout());
 		frame.setTitle("GUI Demo");
 		
@@ -272,41 +410,69 @@ class home_page extends JPanel{
 		
 		gbc.gridx = 1;
 		gbc.gridy = 0;
-		gbc.gridwidth = 3;
+		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		homePage.add(appName, gbc);
 		
+		gbc = new GridBagConstraints();
+		gbc.insets = new Insets(5,5,5,5);
 		gbc.gridx = 0;
 		gbc.gridy = 1;
-		gbc.gridwidth = 3;
+		gbc.gridwidth = 2;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		homePage.add(mainPageBlurb, gbc);
 		
+		gbc = new GridBagConstraints();
+		gbc.insets = new Insets(5,5,5,5);
 		gbc.gridx = 0;
 		gbc.gridy = 2;
 		gbc.gridwidth = 1;
-		homePage.add(goToProductsButton, gbc);
+		homePage.add(allProducts,gbc);
 		
-		gbc.gridx = 1;
-		gbc.gridy = 2;
-		homePage.add(searchButton, gbc);
-		
+		gbc = new GridBagConstraints();
+		gbc.insets = new Insets(5,5,0,5);
 		gbc.gridx = 1;
 		gbc.gridy = 3;
-		homePage.add(scrollPane, gbc);
+		gbc.gridwidth = 1;
+		homePage.add(searchButton, gbc);
+
+		gbc = new GridBagConstraints();
+		gbc.insets = new Insets(5,5,0,5);
+		gbc.gridx = 1;
+		gbc.gridy = 2;
+		homePage.add(searchProducts, gbc);
+		
+		gbc = new GridBagConstraints();
+		gbc.insets = new Insets(0,5,5,5);
+		gbc.gridx = 1;
+		gbc.gridy = 4;
+		homePage.add(filteredProductsList,gbc);
+
+		gbc = new GridBagConstraints();
+		gbc.insets = new Insets(0,5,5,5);
+		gbc.gridx = 0;
+		gbc.gridy = 4;
+		homePage.add(allProductsList,gbc);
 		
 		return homePage;
 		
 	}
 
-	public void setUpHomePageButtonListeners() {
+	public void updateAllProducts(){
+		this.allProductsList.update(this.m_pm.getDisplayListAll());
+	}
+
+	public void setUpButtonListeners() {
 		ActionListener buttonListener = new ActionListener() {
 			@Override 
 			public void actionPerformed(ActionEvent ae) {
 				// Finds out what what event occurred
 				Object event_source = ae.getSource();
-				if (event_source == searchButton) {
-					
+				if(event_source == searchButton) {
+					if(!searchProducts.getText().equals("")){
+						System.out.println(m_pm.getDisplayListSearch(searchProducts.getText()));
+						filteredProductsList.update(m_pm.getDisplayListSearch(searchProducts.getText()));
+					}
 				}
 			}
 		};
@@ -315,13 +481,17 @@ class home_page extends JPanel{
 }
 
 public class ModularRestaurantGUI{
-	
+	private static ReadWriter m_rw=new ReadWriter("root","","rst_data");
+	private static UserManager m_um=new UserManager(m_rw);
+	private static ProductManager m_pm=new ProductManager(m_rw);
 	public static void main(String[] args) {
-	
-		boolean logged_in = true;
-		boolean is_admin = false;
+		final login_page m_lg;
+		final product_page m_pdpg;
+		final admin_page m_adpg;
+		final home_page m_hpg;
+		final cart_page m_ctpg;
 
-		//JPanel panel;
+		JPanel m_loginPanel;
 		
 		JFrame frame = new JFrame("Menu Bar Example");
 		Container cp = frame.getContentPane();
@@ -336,31 +506,29 @@ public class ModularRestaurantGUI{
         JMenu fileMenu = new JMenu("File");
         
         // Declaring the home page
-        home_page hpg = new home_page();
-    	JPanel HomePanel = hpg.setUpHomeGUI();
-    	hpg.setUpHomePageButtonListeners();
+        m_hpg = new home_page(m_pm);
+    	JPanel HomePanel = m_hpg.setUpGUI();
     	// Initially the home panel will appear so we are doing so now. 
     	cp.add(HomePanel);
-        
-        // Declaring the login page
-        login_page lg = new login_page();
-    	JPanel LoginPanel = lg.setUpLoginGUI();
-    	lg.setUpLoginButtonListeners();
     	
     	// Declaring the cart page
-        cart_page ctpg = new cart_page();
-    	JPanel cartPanel = ctpg.setUpCartGUI();
-    	ctpg.setUpCartPageButtonListeners();
+        m_ctpg = new cart_page();
+    	JPanel cartPanel = m_ctpg.setUpCartGUI();
+    	m_ctpg.setUpCartPageButtonListeners();
     	
     	// Declaring the product page
-        product_page pdpg = new product_page();
-    	JPanel productPanel = pdpg.setUpProductGUI();
-    	pdpg.setUpProductPageButtonListeners();
+        m_pdpg = new product_page();
+    	JPanel productPanel = m_pdpg.setUpProductGUI();
+    	m_pdpg.setUpProductPageButtonListeners();
     	
     	// Declaring the admin page
-        admin_page adpg = new admin_page();
-    	JPanel adminPanel = adpg.setUpAdminGUI();
-    	adpg.setUpAdminButtonListeners();
+        m_adpg = new admin_page(m_pm);
+    	JPanel adminPanel = m_adpg.setUpAdminGUI();
+    	m_adpg.setUpAdminButtonListeners();
+
+		 // Declaring the login page
+        m_lg = new login_page(m_um,cp,fileMenu,adminButton);
+		m_lg.setUpGUIs();
 		
     	// This button listen controls which page is open.
 		ActionListener buttonListener = new ActionListener() {
@@ -370,7 +538,7 @@ public class ModularRestaurantGUI{
 				Object event_source = ae.getSource();
 				if (event_source == loginButton) {
 					cp.removeAll();
-					cp.add(LoginPanel);
+					cp.add(m_lg.getCurrentPanel());
 					cp.revalidate();
 					cp.repaint();
 						
@@ -381,9 +549,11 @@ public class ModularRestaurantGUI{
 					cp.add(HomePanel);
 					cp.revalidate();
 					cp.repaint();
+
+					m_hpg.updateAllProducts();
 				}
 				
-				else if (event_source == adminButton) {
+				else if (event_source == adminButton && m_um.checkAdmin()) {
 					cp.removeAll();
 					cp.add(adminPanel);
 					cp.revalidate();
@@ -416,15 +586,12 @@ public class ModularRestaurantGUI{
         fileMenu.add(productButton);
         fileMenu.add(cartButton);
         fileMenu.add(loginButton);
-        fileMenu.add(adminButton);
         
         menuBar.add(fileMenu);
         frame.setJMenuBar(menuBar);
         	
         frame.setSize(800, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        	
-        
+        frame.setVisible(true); 
      }
 }

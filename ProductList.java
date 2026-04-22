@@ -5,17 +5,26 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.event.*;
 
-class Product_List extends JPanel implements ListSelectionListener{
+class ProductList extends JPanel implements ListSelectionListener{
+    private DefaultListModel model;
     private JList<String> displayList;
     private JScrollPane scrollPane;
 
-    public Product_List(ArrayList<String> data){
+    public ProductList(ArrayList<String> data){
         GridBagConstraints gridConstraints=null;
         GridLayout layout=new GridLayout();
-        displayList = new JList(data.toArray());
-        displayList.addListSelectionListener(this);
 
-        scrollPane = new JScrollPane(displayList);
+        this.model=new DefaultListModel();
+        this.displayList = new JList(model);
+        this.displayList.addListSelectionListener(this);
+
+        for(String str:data){
+            this.model.addElement(str);
+        }
+
+        this.displayList.ensureIndexIsVisible(model.getSize() - 1);
+
+        this.scrollPane = new JScrollPane(displayList);
 
         gridConstraints=new GridBagConstraints();
         gridConstraints.gridx=0;
@@ -25,6 +34,15 @@ class Product_List extends JPanel implements ListSelectionListener{
         setLayout(layout);
 
         add(scrollPane,gridConstraints);
+    }
+
+    public void update(ArrayList<String> data){
+        this.model.removeAllElements();
+        for(String str:data){
+            this.model.addElement(str);
+        }
+
+        this.displayList.ensureIndexIsVisible(model.getSize() - 1);
     }
 
     @Override

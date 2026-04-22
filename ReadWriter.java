@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class ReadWriter {
 	private static String m_root_url = "jdbc:mysql://localhost:3306/";
@@ -66,6 +67,28 @@ public class ReadWriter {
 					return this.paramQuery(full_query,target_table,params);
 				case "insert into":
 					return this.paramQuery(full_query,target_table,params);
+				case "update dynamic":
+					return this.paramQuery(full_query,target_table,params);
+			}
+		}catch(ClassNotFoundException e){
+			System.out.println("CLASS EXCEPTION: "+e.getMessage());
+			e.printStackTrace();
+		}catch(SQLException e){
+			System.out.println("SQL EXCEPTION: "+e.getMessage());
+			e.printStackTrace();
+		}catch(Exception e){
+			System.out.println("RUN QUERY ERROR: "+e.getMessage()+" ");
+			e.printStackTrace();
+		}
+		
+		return new ArrayList<>();
+	}
+
+	public ArrayList<Object> runQuery(String query_type,String full_query,String target_table,HashMap<String,Object> params) {
+		try{
+			switch(query_type){
+				case "update dynamic":
+					return this.paramQueryDynamic(full_query,target_table,params);
 			}
 		}catch(ClassNotFoundException e){
 			System.out.println("CLASS EXCEPTION: "+e.getMessage());
@@ -97,11 +120,73 @@ public class ReadWriter {
 				Integer n_obj=(Integer) obj;
 
 				ps.setInt(params.indexOf(obj)+1,n_obj);
+			}else if(obj instanceof Double){
+				Double n_obj=(Double) obj;
+
+				ps.setDouble(params.indexOf(obj)+1,n_obj);
 			}
 		}
 
 		ps.executeUpdate();
 
+		return returnObj;
+	}
+
+	private ArrayList<Object> paramQueryDynamic(String full_query,String target_table,HashMap<String,Object> params) throws ClassNotFoundException,SQLException{
+		ArrayList<Object> returnObj=new ArrayList<Object>();
+
+		String format_query=String.format(full_query,target_table);
+		System.out.println(format_query);
+		PreparedStatement ps=m_con.prepareStatement(format_query);
+	
+		String targetFields="";
+
+		System.out.println(params.keySet());
+
+		for(String key:params.keySet()){
+			if(targetFields!=""){
+				targetFields+=", ";
+			}
+
+			switch(key){
+				case Constants.dynamic_query.update.kname:
+					targetFields+=Constants.dynamic_query.update.kname;
+				break;
+				case Constants.dynamic_query.update.kid:
+					targetFields+=Constants.dynamic_query.update.kid;
+				break;
+				case Constants.dynamic_query.update.kcost:
+					targetFields+=Constants.dynamic_query.update.kcost;
+				break;
+				case Constants.dynamic_query.update.knutritValue:
+					targetFields+=Constants.dynamic_query.insert.knutritValue;
+				break;
+				case Constants.dynamic_query.update.kimg:
+					targetFields+=Constants.dynamic_query.update.kimg;
+				break;
+			}
+		}
+
+		ps.setString(0,targetFields);
+
+		for(Object obj:params.values()){
+			if(obj instanceof String){
+				String n_obj=(String) obj;
+				
+				ps.setString(new ArrayList<>(params.keySet()).indexOf(obj)+2,n_obj);
+			}else if(obj instanceof Integer){
+				Integer n_obj=(Integer) obj;
+
+				ps.setInt(new ArrayList<>(params.keySet()).indexOf(obj)+2,n_obj);
+			}else if(obj instanceof Double){
+				Double n_obj=(Double) obj;
+
+				ps.setDouble(new ArrayList<>(params.keySet()).indexOf(obj)+2,n_obj);
+			}
+		}
+
+		ps.executeUpdate();
+		
 		return returnObj;
 	}
 
