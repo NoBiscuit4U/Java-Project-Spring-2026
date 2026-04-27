@@ -232,10 +232,6 @@ class admin_page extends JPanel{
 	public HashMap<String,Object> getMap(){
 		HashMap<String,Object> map=new HashMap<String,Object>();
 
-
-		if(!idField.getText().equals("")){
-			map.put(Constants.obj_query_cons.kid_qry,Integer.parseInt(idField.getText()));
-		}
 		if(!nameField.getText().equals("")){
 			map.put(Constants.obj_query_cons.kname_qry,nameField.getText());
 		}

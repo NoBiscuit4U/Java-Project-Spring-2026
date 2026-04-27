@@ -18,7 +18,7 @@ public class Constants {
 	public static final class obj_query_cons{
 		public static final String kname_qry="Name";
 		public static final String kid_qry="ID";
-		public static final String kcost_qry="ID";
+		public static final String kcost_qry="Cost";
 		public static final String knutrit_qry="NutritValue";
 		public static final String kemail_qry="Email";
 		public static final String kpassword_qry="Password";
@@ -48,7 +48,7 @@ public class Constants {
 		public static final String kupdate_user="UPDATE %s SET Name = ?, ID = ?, Email = ?, Password = ? WHERE ID = ";
 		public static final String kupdate_pdct="UPDATE %s SET Name = ?, ID = ?, Cost = ?, NutritValue = ?, Img = ? WHERE ID = ";
 
-		public static final String kupdate_pdct_dynamic="INSERT INTO %s ? WHERE ID =";
+		public static final String kupdate_pdct_dynamic="UPDATE %1$s SET %2$s WHERE ID = ";
 	}
 
 	public static final class dynamic_query{
@@ -56,17 +56,17 @@ public class Constants {
 			public static final String kname= "`Name`";	
 			public static final String kid="`ID`";	
 			public static final String kcost="`Cost`";	
-			public static final String knutritValue="``NutritValue`";	
+			public static final String knutritValue="`NutritValue`";	
 			public static final String kimg="`Img`";
 			public static final String kvalues=" VALUES";
 		}
 
 		public static final class update{
-			public static final String kname= "Name = ?";	
-			public static final String kid="ID = ?";	
-			public static final String kcost="Cost = ?";	
-			public static final String knutritValue="`NutritValue = ?";	
-			public static final String kimg="`Img = ?";
+			public static final String kname= "`Name` = %s";	
+			public static final String kid="`ID` = %s";	
+			public static final String kcost="`Cost` = %s";	
+			public static final String knutritValue="`NutritValue` = %s";	
+			public static final String kimg="``Img` = %s";
 		}
 	}
 }

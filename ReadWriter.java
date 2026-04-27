@@ -134,56 +134,44 @@ public class ReadWriter {
 
 	private ArrayList<Object> paramQueryDynamic(String full_query,String target_table,HashMap<String,Object> params) throws ClassNotFoundException,SQLException{
 		ArrayList<Object> returnObj=new ArrayList<Object>();
-
-		String format_query=String.format(full_query,target_table);
-		System.out.println(format_query);
-		PreparedStatement ps=m_con.prepareStatement(format_query);
-	
 		String targetFields="";
-
-		System.out.println(params.keySet());
 
 		for(String key:params.keySet()){
 			if(targetFields!=""){
 				targetFields+=", ";
 			}
-
 			switch(key){
-				case Constants.dynamic_query.update.kname:
+				case Constants.obj_query_cons.kname_qry:
 					targetFields+=Constants.dynamic_query.update.kname;
 				break;
-				case Constants.dynamic_query.update.kid:
-					targetFields+=Constants.dynamic_query.update.kid;
-				break;
-				case Constants.dynamic_query.update.kcost:
+				case Constants.obj_query_cons.kcost_qry:
 					targetFields+=Constants.dynamic_query.update.kcost;
 				break;
-				case Constants.dynamic_query.update.knutritValue:
-					targetFields+=Constants.dynamic_query.insert.knutritValue;
+				case Constants.obj_query_cons.knutrit_qry:
+					targetFields+=Constants.dynamic_query.update.knutritValue;
 				break;
-				case Constants.dynamic_query.update.kimg:
+				case Constants.obj_query_cons.kimg_qry:
 					targetFields+=Constants.dynamic_query.update.kimg;
 				break;
 			}
-		}
 
-		ps.setString(0,targetFields);
+			Object obj=params.get(key);
+			String n_obj="";
 
-		for(Object obj:params.values()){
 			if(obj instanceof String){
-				String n_obj=(String) obj;
-				
-				ps.setString(new ArrayList<>(params.keySet()).indexOf(obj)+2,n_obj);
+				n_obj="'"+(String) obj+"'";
 			}else if(obj instanceof Integer){
-				Integer n_obj=(Integer) obj;
-
-				ps.setInt(new ArrayList<>(params.keySet()).indexOf(obj)+2,n_obj);
+				n_obj=Integer.toString(((Integer) obj));
 			}else if(obj instanceof Double){
-				Double n_obj=(Double) obj;
-
-				ps.setDouble(new ArrayList<>(params.keySet()).indexOf(obj)+2,n_obj);
+				n_obj=Double.toString(((Double) obj));
 			}
+
+			targetFields=String.format(targetFields,n_obj);
 		}
+
+		String format_query=String.format(full_query,target_table,targetFields);
+		System.out.println(format_query);
+		PreparedStatement ps=m_con.prepareStatement(format_query);
 
 		ps.executeUpdate();
 		
@@ -194,7 +182,6 @@ public class ReadWriter {
 		ArrayList<Object> returnObj=new ArrayList<Object>();
 
 		String format_query=String.format(full_query,target_table);
-		System.out.println(format_query);
 		PreparedStatement ps=m_con.prepareStatement(format_query);
 
 		ps.executeUpdate();

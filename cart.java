@@ -1,14 +1,12 @@
-
-import java.util.Scanner;
 import java.util.ArrayList;
 
-class Cart{
+class cart{
 	
 	private ArrayList<Product> order_items = new ArrayList<>();
 	private double total_cost;
 	private int cart_id;
 	
-	public Cart(int cart_id) {
+	public cart(int cart_id) {
 		this.cart_id = cart_id;
 	}
 	
@@ -17,7 +15,7 @@ class Cart{
 	}
 	
 	public void remove_pdcts(int product_id) {
-		//order_items.remove(product_id);
+		order_items.remove(product_id);
 	}
 	
 	public void checkout() {
