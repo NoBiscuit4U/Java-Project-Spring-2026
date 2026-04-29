@@ -1,7 +1,6 @@
-import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Product implements Serializable{
+public class Product{
 	private String m_name;
 	private int m_id;
 	private double m_cost;

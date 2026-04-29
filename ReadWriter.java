@@ -108,22 +108,19 @@ public class ReadWriter {
 		ArrayList<Object> returnObj=new ArrayList<Object>();
 
 		String format_query=String.format(full_query,target_table);
-		System.out.println(format_query);
 		PreparedStatement ps=m_con.prepareStatement(format_query);
 
-		for(Object obj:params){
+		for(int i = 0; i < params.size(); i++) {
+			Object obj = params.get(i);
+			int paramIndex = i + 1;
 			if(obj instanceof String){
-				String n_obj=(String) obj;
-				
-				ps.setString(params.indexOf(obj)+1,n_obj);
-			}else if(obj instanceof Integer){
-				Integer n_obj=(Integer) obj;
-
-				ps.setInt(params.indexOf(obj)+1,n_obj);
-			}else if(obj instanceof Double){
-				Double n_obj=(Double) obj;
-
-				ps.setDouble(params.indexOf(obj)+1,n_obj);
+				ps.setString(paramIndex, (String) obj);
+			}else if (obj instanceof Integer){
+				ps.setInt(paramIndex, (Integer) obj);
+			}else if (obj instanceof Double){
+				ps.setDouble(paramIndex, (Double) obj);
+			}else{
+				ps.setObject(paramIndex, obj);
 			}
 		}
 
@@ -134,43 +131,43 @@ public class ReadWriter {
 
 	private ArrayList<Object> paramQueryDynamic(String full_query,String target_table,HashMap<String,Object> params) throws ClassNotFoundException,SQLException{
 		ArrayList<Object> returnObj=new ArrayList<Object>();
-		String targetFields="";
+		StringBuilder targetFields=new StringBuilder();
 
 		for(String key:params.keySet()){
-			if(targetFields.equals("")){
-				targetFields+=", ";
-			}
+			String updatePattern=null;
 			switch(key){
 				case Constants.obj_query_cons.kname_qry:
-					targetFields+=Constants.dynamic_query.update.kname;
+					updatePattern=Constants.dynamic_query.update.kname;
 				break;
 				case Constants.obj_query_cons.kcost_qry:
-					targetFields+=Constants.dynamic_query.update.kcost;
+					updatePattern=Constants.dynamic_query.update.kcost;
 				break;
 				case Constants.obj_query_cons.knutrit_qry:
-					targetFields+=Constants.dynamic_query.update.knutritValue;
+					updatePattern=Constants.dynamic_query.update.knutritValue;
 				break;
 				case Constants.obj_query_cons.kimg_qry:
-					targetFields+=Constants.dynamic_query.update.kimg;
+					updatePattern=Constants.dynamic_query.update.kimg;
 				break;
+			}
+			if(updatePattern==null){
+				continue;
+			}
+			if(targetFields.length()>0){
+				targetFields.append(", ");
 			}
 
 			Object obj=params.get(key);
-			String n_obj="";
-
+			String n_obj;
 			if(obj instanceof String){
-				n_obj="'"+(String) obj+"'";
-			}else if(obj instanceof Integer){
-				n_obj=Integer.toString(((Integer) obj));
-			}else if(obj instanceof Double){
-				n_obj=Double.toString(((Double) obj));
+				String escaped=((String) obj).replace("'", "''");
+				n_obj="'"+escaped+"'";
+			}else{
+				n_obj=String.valueOf(obj);
 			}
-
-			targetFields=String.format(targetFields,n_obj);
+			targetFields.append(String.format(updatePattern,n_obj));
 		}
 
-		String format_query=String.format(full_query,target_table,targetFields);
-		System.out.println(format_query);
+		String format_query=String.format(full_query,target_table,targetFields.toString());
 		PreparedStatement ps=m_con.prepareStatement(format_query);
 
 		ps.executeUpdate();

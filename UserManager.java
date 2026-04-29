@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class UserManager {
     private ReadWriter m_rw;
-    private int session_id;
+    private int session_id=0;
 
     public UserManager(ReadWriter rw){
         m_rw=rw;
@@ -41,11 +41,15 @@ public class UserManager {
     }
 
     public boolean checkAdmin(){
-        try{
-            this.m_rw.runQuery(Constants.query_cons.kselect_admin_id,Constants.preset_querys.kget_unique+Integer.toString(this.session_id),
-                                    Constants.table_query_cons.kadmin_ids_qry,false).get(0);
-            return true;
-        }catch(Exception e){
+        if(this.session_id!=0){
+            try{
+                this.m_rw.runQuery(Constants.query_cons.kselect_admin_id,Constants.preset_querys.kget_unique+Integer.toString(this.session_id),
+                                        Constants.table_query_cons.kadmin_ids_qry,false).get(0);
+                return true;
+            }catch(Exception e){
+                return false;
+            }
+        }else{
             return false;
         }
     }
@@ -71,5 +75,9 @@ public class UserManager {
                     Constants.table_query_cons.kusr_table_qry,params);
         }
 
+    }
+
+    public void logout(){
+        this.session_id=0;
     }
 }

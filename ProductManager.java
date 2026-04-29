@@ -17,9 +17,9 @@ public class ProductManager {
 
     private Product getUnique(int ID){
         Product pdct=(Product) m_rw.runQuery(Constants.query_cons.kselect,Constants.preset_querys.kget_unique+Integer.toString(ID),
-                                    Constants.table_query_cons.kpdct_table_qry,false).get(0);
+                                    Constants.table_query_cons.kpdct_table_qry,true).get(0);
         try{
-            pdct.setPdctOptions(this.getProductOptions(pdct.getID()));
+            //pdct.setPdctOptions(this.getProductOptions(pdct.getID()));
         }catch(Exception e){}
 
         return pdct;
@@ -35,6 +35,10 @@ public class ProductManager {
 
             this.m_productlist=this.getAllProducts();
         }
+    }
+
+    public void deleteProduct(int ID){
+        m_rw.runQuery(Constants.query_cons.kdelete,Constants.preset_querys.kdelete_obj+Integer.toString(ID),Constants.table_query_cons.kpdct_table_qry,false);
     }
 
     public void updateProduct(ArrayList<Object> params){

@@ -10,11 +10,7 @@ public class Main {
 	private static ProductManager m_pm=new ProductManager(m_rw);
 
     public static void main(String[] args) {
-        HashMap<String,JPanel> map=new HashMap<String,JPanel>(){{
-            put("Login",new Login(m_um));
-        }};
-
-		MainMenu menu=new MainMenu(m_pm,"TEST","Finely Crafted Food","TEST DESCRIPTION",map);
+		MainMenu menu=new MainMenu(m_pm,m_um,"TEST","Finely Crafted Food","TEST DESCRIPTION");
         menu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 }
