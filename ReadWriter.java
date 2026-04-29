@@ -137,7 +137,7 @@ public class ReadWriter {
 		String targetFields="";
 
 		for(String key:params.keySet()){
-			if(targetFields!=""){
+			if(targetFields.equals("")){
 				targetFields+=", ";
 			}
 			switch(key){

@@ -480,7 +480,12 @@ public class ModularRestaurantGUI{
 	private static ReadWriter m_rw=new ReadWriter("root","","rst_data");
 	private static UserManager m_um=new UserManager(m_rw);
 	private static ProductManager m_pm=new ProductManager(m_rw);
-	public static void main(String[] args) {
+	
+	/*public static void main(String[] args) {
+		MainMenu menu=new MainMenu(m_pm,"TEST","Finely Crafted Food","TEST DESCRIPTION");
+        menu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        menu.setVisible(true); 
+
 		final login_page m_lg;
 		final product_page m_pdpg;
 		final admin_page m_adpg;
@@ -589,5 +594,6 @@ public class ModularRestaurantGUI{
         frame.setSize(800, 600);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true); 
-     }
+		
+     }*/
 }

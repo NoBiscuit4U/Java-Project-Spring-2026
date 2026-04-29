@@ -64,6 +64,10 @@ public class ProductManager {
         return pdct_arr;
     }
 
+    public ArrayList<Product> getProductList(){
+        return this.m_productlist;
+    }
+
     public void runDynamicUpdate(HashMap<String,Object> params,int ID){
         m_rw.runQuery(Constants.query_cons.kupdateDynamic,Constants.preset_querys.kupdate_pdct_dynamic+Integer.toString(ID),Constants.table_query_cons.kpdct_table_qry,params);
     }
