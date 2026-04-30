@@ -5,8 +5,10 @@ import javax.swing.border.*;
 
 public class LoginPage extends JPanel {
     private UserManager m_um;
+
     private JPanel m_loginCard;
     private JPanel m_logoutCard;
+    private JPanel m_createAccountCard;
 
     // ── Shared palette (matches RestaurantApp) ───────────────────────────────
     static final Color RED_ACCENT = new Color(220, 60, 60);
@@ -21,16 +23,20 @@ public class LoginPage extends JPanel {
         m_um = um;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(LIGHT_BG);
+
         m_loginCard = buildLoginCard();
         m_logoutCard = buildLogoutCard();
         m_logoutCard.setVisible(false);
+        m_createAccountCard=buildCreateAccountCard();
+        m_createAccountCard.setVisible(false);
+
         add(m_loginCard); 
         add(m_logoutCard); 
+        add(m_createAccountCard); 
         add(buildFooter());
     }
 
     // ─── LOGIN CARD ──────────────────────────────────────────────────────────
-
     private JPanel buildLoginCard() {
         // Warm gradient outer panel — mirrors the hero banner style
         JPanel outer = new JPanel(new GridBagLayout()) {
@@ -59,8 +65,7 @@ public class LoginPage extends JPanel {
         card.setBorder(BorderFactory.createCompoundBorder(
                 new LineBorder(new Color(220, 210, 205), 1, true),
                 new EmptyBorder(36, 40, 36, 40)));
-        card.setPreferredSize(new Dimension(360, 440));
-        card.setMaximumSize(new Dimension(360, 440));
+        card.setPreferredSize(new Dimension(360, 500));
 
         // Logo mark
         JLabel icon = new JLabel("✦");
@@ -109,7 +114,7 @@ public class LoginPage extends JPanel {
         JButton createBtn = makeOutlineButton("Create New Account");
         createBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
         createBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        createBtn.addActionListener(e -> handleCreateAccount());
+        createBtn.addActionListener(e -> openAccountCreation());
 
         // Assemble
         card.add(icon);
@@ -134,6 +139,106 @@ public class LoginPage extends JPanel {
         card.add(orRow);
         card.add(Box.createVerticalStrut(20));
         card.add(createBtn);
+
+        outer.add(card);
+        return outer;
+    }
+
+    private JPanel buildCreateAccountCard() {
+        // Warm gradient outer panel — mirrors the hero banner style
+        JPanel outer = new JPanel(new GridBagLayout()) {
+            @Override protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                Graphics2D g2 = (Graphics2D) g;
+                g2.setPaint(new GradientPaint(
+                        0, 0, new Color(245, 238, 232),
+                        getWidth(), getHeight(), new Color(235, 220, 210)));
+                g2.fillRect(0, 0, getWidth(), getHeight());
+                // Subtle dot texture
+                g2.setColor(new Color(180, 140, 120, 40));
+                for (int x = 0; x < getWidth(); x += 28)
+                    for (int y = 0; y < getHeight(); y += 28)
+                        g2.fillOval(x, y, 3, 3);
+            }
+        };
+        // Let the outer fill all available space above the footer
+        outer.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        outer.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        // ── White card ──
+        JPanel card = new JPanel();
+        card.setLayout(new BoxLayout(card, BoxLayout.Y_AXIS));
+        card.setBackground(CARD_BG);
+        card.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(new Color(220, 210, 205), 1, true),
+                new EmptyBorder(36, 40, 36, 40)));
+        card.setPreferredSize(new Dimension(360, 550));
+
+        // Logo mark
+        JLabel icon = new JLabel("✦");
+        icon.setFont(new Font("Serif", Font.PLAIN, 32));
+        icon.setForeground(RED_ACCENT);
+        icon.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel subtitle = new JLabel("Create your account");
+        subtitle.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        subtitle.setForeground(TEXT_MUTED);
+        subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JSeparator sep = new JSeparator();
+        sep.setForeground(new Color(235, 225, 220));
+        sep.setMaximumSize(new Dimension(Integer.MAX_VALUE, 1));
+
+        JLabel idLabel = makeFieldLabel("User ID");
+        idLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JTextField idField = makeTextField("Enter your user ID");
+        idField.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel nameLabel = makeFieldLabel("User Name");
+        nameLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JTextField nameField = makeTextField("Enter your Name");
+        nameField.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel emailLabel = makeFieldLabel("Email");
+        emailLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JTextField emailField = makeTextField("Enter your Email");
+        emailField.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel pwLabel = makeFieldLabel("Password");
+        pwLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JTextField pwField = makeTextField("Enter your Password");
+        pwField.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JButton submitBtn = makeRedButton("Create Account");
+        submitBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
+        submitBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
+        submitBtn.addActionListener(e -> handleAccountCreation(idField,pwField));
+
+
+        card.add(icon);
+        card.add(Box.createVerticalStrut(10));
+        card.add(subtitle);
+        card.add(Box.createVerticalStrut(24));
+        card.add(sep);
+        card.add(Box.createVerticalStrut(24));
+        card.add(idLabel);
+        card.add(Box.createVerticalStrut(6));
+        card.add(idField);
+        card.add(Box.createVerticalStrut(18));
+        card.add(nameLabel);
+        card.add(Box.createVerticalStrut(6));
+        card.add(nameField);
+        card.add(Box.createVerticalStrut(18));
+        card.add(emailLabel);
+        card.add(Box.createVerticalStrut(6));
+        card.add(emailField);
+        card.add(Box.createVerticalStrut(18));
+        card.add(pwLabel);
+        card.add(Box.createVerticalStrut(6));
+        card.add(pwField);
+        card.add(Box.createVerticalStrut(24));
+        card.add(submitBtn);
+        card.add(Box.createVerticalStrut(20));
 
         outer.add(card);
         return outer;
@@ -232,6 +337,25 @@ public class LoginPage extends JPanel {
             }
         }
     }
+    
+    private void openAccountCreation(){
+        m_loginCard.setVisible(false);
+        m_createAccountCard.setVisible(true);
+        this.revalidate();
+        this.repaint();
+    }
+
+    private void handleAccountCreation(JTextField idField, JTextField pwField) {
+        String id = idField.getText().trim();
+        String pw = new String(pwField.getText()).trim();
+        if (id.isEmpty() || pw.isEmpty()) {
+        }
+        m_loginCard.setVisible(true);
+        m_createAccountCard.setVisible(false);
+        this.revalidate();
+        this.repaint();
+    }
+
 
     private void handleLogout() {
         m_loginCard.setVisible(true);

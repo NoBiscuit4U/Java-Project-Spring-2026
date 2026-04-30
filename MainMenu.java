@@ -25,6 +25,7 @@ public class MainMenu extends JFrame {
 
     private ProductManager m_pm;
     private UserManager m_um;
+    private Cart m_cart;
 
     private CardLayout m_cardLayout;
     private JPanel m_contentPanel;
@@ -41,6 +42,7 @@ public class MainMenu extends JFrame {
     public MainMenu(ProductManager pm,UserManager um) {
         m_pm=pm;
         m_um=um;
+        m_cart=new Cart(1);
 
         loadSiteContent();
 
@@ -55,6 +57,7 @@ public class MainMenu extends JFrame {
         m_adminPanel=new AdminPage(m_pm,m_um);
         addPage("Home",homePanel);
         addPage("Login",new LoginPage(m_um));
+        addPage("Products",new ProductPage(m_pm.getProductList(),m_cart));
 
         setTitle(m_title);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
