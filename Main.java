@@ -10,7 +10,7 @@ public class Main {
 	private static ProductManager m_pm=new ProductManager(m_rw);
 
     public static void main(String[] args) {
-		MainMenu menu=new MainMenu(m_pm,m_um,"TEST","Finely Crafted Food","TEST DESCRIPTION");
+		MainMenu menu=new MainMenu(m_pm,m_um);
         menu.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 }

@@ -29,6 +29,10 @@ public class Constants {
 		public static final String kzipcode_qry="Zipcode";
 		public static final String kexpir_qry="Expiration";
 		public static final String kaddress_qry="Address";
+		public static final String kmainTitle_qry="Main Title";
+		public static final String kheaderDesc_qry="Header Description";
+		public static final String kbodyDesc_qry="Body Description";
+		public static final String kbannerImg_qry="Banner Img";
 	}
 
 	public static final class table_query_cons{
@@ -42,6 +46,7 @@ public class Constants {
 
 	public static final class preset_querys{
 		public static final String kget_unique="SELECT * FROM %s WHERE `ID` = ";
+		public static final String kget_sitecontent="SELECT * FROM %s WHERE 1";
 		public static final String kget_all="SELECT * FROM %s";
 		public static final String kdelete_obj="DELETE FROM %s WHERE `ID` = ";
 		public static final String kinsert_user="INSERT INTO %s (`Name`, `ID`, `Email`, `Password`) VALUES (?,?,?,?)";
@@ -50,27 +55,20 @@ public class Constants {
 		public static final String kupdate_pdct="UPDATE %s SET Name = ?, ID = ?, Cost = ?, NutritValue = ?, Img = ? WHERE ID = ";
 
 		public static final String kupdate_pdct_dynamic="UPDATE %1$s SET %2$s WHERE ID = ";
+		public static final String kupdate_content_dynamic="UPDATE %1$s SET %2$s WHERE ";
 	}
 
 	public static final class dynamic_query{
-		public static final class insert{
-			public static final String kname= "`Name`";	
-			public static final String kid="`ID`";	
-			public static final String kcost="`Cost`";	
-			public static final String knutritValue="`NutritValue`";	
-			public static final String kimg="`Img`";
-			public static final String kmainTitle="`Main Title`";
-			public static final String kheaderDesc="`Header Description`";
-			public static final String kbodyDesc="`Body Description`";
-			public static final String kbannerImg="`Banner Img`";
-		}
-
 		public static final class update{
 			public static final String kname= "`Name` = %s";	
 			public static final String kid="`ID` = %s";	
 			public static final String kcost="`Cost` = %s";	
 			public static final String knutritValue="`NutritValue` = %s";	
 			public static final String kimg="`Img` = %s";
+			public static final String kmainTitle="`Main Title` = %s";
+			public static final String kheaderDesc="`Header Description` = %s";
+			public static final String kbodyDesc="`Body Description` = %s";
+			public static final String kbannerImg="`Banner Img` = %s";
 		}
 	}
 }

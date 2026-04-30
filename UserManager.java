@@ -56,7 +56,11 @@ public class UserManager {
     }
 
     public void runDynamicUpdate(HashMap<String,Object> params,int ID){
-        m_rw.runQuery(Constants.query_cons.kupdateDynamic,Constants.preset_querys.kupdate_pdct_dynamic+Integer.toString(ID),Constants.table_query_cons.kusr_table_qry,params);
+        m_rw.runQuery(Constants.query_cons.kupdateDynamic,Constants.preset_querys.kupdate_content_dynamic+Integer.toString(ID),Constants.table_query_cons.ksitecontent_qry,params);
+    }
+
+    public ArrayList<Object> getSiteContent(){
+        return m_rw.runQuery(Constants.query_cons.kselect,Constants.preset_querys.kget_sitecontent,Constants.table_query_cons.ksitecontent_qry,true);
     }
 
     public boolean checkUserLogin(int ID,String pass){

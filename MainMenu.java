@@ -10,6 +10,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.*;
 import java.util.Arrays;
+import java.util.ArrayList;
 
 public class MainMenu extends JFrame {
 
@@ -32,9 +33,16 @@ public class MainMenu extends JFrame {
     private JPanel m_root;
     private JPanel m_adminPanel;
 
-    public MainMenu(ProductManager pm,UserManager um,String title,String header_descrip,String body_descrip) {
+    private String m_title;
+    private String m_header_descrip;
+    private String m_body_descrip;
+    private String m_banner_img;
+
+    public MainMenu(ProductManager pm,UserManager um) {
         m_pm=pm;
         m_um=um;
+
+        loadSiteContent();
 
         m_navLinksPanel=new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
         m_navLinksPanel.setOpaque(false);
@@ -43,12 +51,12 @@ public class MainMenu extends JFrame {
         m_cardLayout=new CardLayout();
         m_contentPanel=new JPanel(m_cardLayout);
 
-        JPanel homePanel=buildBody(header_descrip,body_descrip);
+        JPanel homePanel=buildBody();
         m_adminPanel=new AdminPage(m_pm,m_um);
         addPage("Home",homePanel);
         addPage("Login",new LoginPage(m_um));
 
-        setTitle(title);
+        setTitle(m_title);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1050,780);
         setMinimumSize(new Dimension(900, 650));
@@ -57,7 +65,7 @@ public class MainMenu extends JFrame {
         m_root=new JPanel(new BorderLayout());
         m_root.setBackground(LIGHT_BG);
 
-        m_root.add(buildNavBar(title),BorderLayout.NORTH);
+        m_root.add(buildNavBar(m_title),BorderLayout.NORTH);
 
         JScrollPane scroll=new JScrollPane(m_contentPanel);
         scroll.setBorder(null);
@@ -68,6 +76,21 @@ public class MainMenu extends JFrame {
         setVisible(true);
 
         runUpdate();
+    }
+
+    private void loadSiteContent(){
+        try{
+            ArrayList<Object> sitecontent=m_um.getSiteContent();
+            m_title=(String) sitecontent.get(0); 
+            m_header_descrip=(String) sitecontent.get(1); 
+            m_body_descrip=(String) sitecontent.get(2); 
+            m_banner_img=(String) sitecontent.get(3); 
+        }catch(Exception e){
+            m_title="Missing"; 
+            m_header_descrip="Missing"; 
+            m_body_descrip="Missing"; 
+            m_banner_img="Missing"; 
+        }
     }
 
     private void runUpdate(){
@@ -177,12 +200,12 @@ public class MainMenu extends JFrame {
 
     // ─── BODY ───────────────────────────────────────────────────────────────────
 
-    private JPanel buildBody(String header_descrip,String body_descrip) {
+    private JPanel buildBody() {
         JPanel body = new JPanel();
         body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
         body.setBackground(LIGHT_BG);
 
-        body.add(buildHeroBanner(header_descrip,body_descrip));
+        body.add(buildHeroBanner());
         body.add(buildFeaturedSection());
         body.add(buildFooter());
 
@@ -191,25 +214,31 @@ public class MainMenu extends JFrame {
 
     // ─── HERO BANNER ────────────────────────────────────────────────────────────
 
-    private JPanel buildHeroBanner(String header_descrip,String body_descrip) {
+    private JPanel buildHeroBanner() {
         // Gradient panel standing in for a background photo
         JPanel hero = new JPanel(new GridBagLayout()) {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                Graphics2D g2 = (Graphics2D) g;
-                // Dark gradient to simulate a dimmed food photo background
-                GradientPaint gp = new GradientPaint(
-                        0, 0, new Color(40, 20, 10),
-                        getWidth(), getHeight(), new Color(80, 30, 10));
-                g2.setPaint(gp);
-                g2.fillRect(0, 0, getWidth(), getHeight());
+                try{
+                    File file=new File(m_banner_img);
+                    BufferedImage buff_img=ImageIO.read(file);
+                    g.drawImage(buff_img,0,0,getWidth(),getHeight(),this);
+                }catch(IOException e){
+                    Graphics2D g2 = (Graphics2D) g;
+                    // Dark gradient to simulate a dimmed food photo background
+                    GradientPaint gp = new GradientPaint(
+                            0, 0, new Color(40, 20, 10),
+                            getWidth(), getHeight(), new Color(80, 30, 10));
+                    g2.setPaint(gp);
+                    g2.fillRect(0, 0, getWidth(), getHeight());
 
-                // Subtle texture dots
-                g2.setColor(new Color(255, 255, 255, 15));
-                for (int x = 0; x < getWidth(); x += 30)
-                    for (int y = 0; y < getHeight(); y += 30)
-                        g2.fillOval(x, y, 3, 3);
+                    // Subtle texture dots
+                    g2.setColor(new Color(255, 255, 255, 15));
+                    for (int x = 0; x < getWidth(); x += 30)
+                        for (int y = 0; y < getHeight(); y += 30)
+                            g2.fillOval(x, y, 3, 3);
+                }
             }
         };
         hero.setPreferredSize(new Dimension(0, 320));
@@ -220,14 +249,20 @@ public class MainMenu extends JFrame {
         content.setOpaque(false);
         content.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel title = new JLabel(header_descrip);
+        JLabel title = new JLabel(m_header_descrip);
         title.setFont(new Font("Serif", Font.BOLD, 38));
-        title.setForeground(Color.WHITE);
+        title.setForeground(Color.BLACK);
+        title.setBackground(new Color(255, 255, 255, 100));
+        title.setOpaque(true);
+        title.setBorder(new EmptyBorder(6, 12, 6, 12));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel subtitle = new JLabel(body_descrip);
+        JLabel subtitle = new JLabel(m_body_descrip);
         subtitle.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        subtitle.setForeground(new Color(220, 220, 220));
+        subtitle.setForeground(Color.BLACK);
+        subtitle.setBackground(new Color(255, 255, 255, 100));
+        subtitle.setOpaque(true);
+        subtitle.setBorder(new EmptyBorder(4, 10, 4, 10));
         subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         content.add(title);
@@ -307,7 +342,6 @@ public class MainMenu extends JFrame {
                     BufferedImage buff_img=ImageIO.read(file);
                     g.drawImage(buff_img,0,0,getWidth(),getHeight(),this);
                 }catch(IOException e){
-                    super.paintComponent(g);
                     Graphics2D g2 = (Graphics2D) g;
                     GradientPaint gp = new GradientPaint(
                             0, 0, new Color(50, 30, 20),

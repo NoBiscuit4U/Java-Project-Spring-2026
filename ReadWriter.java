@@ -148,6 +148,18 @@ public class ReadWriter {
 				case Constants.obj_query_cons.kimg_qry:
 					updatePattern=Constants.dynamic_query.update.kimg;
 				break;
+				case Constants.obj_query_cons.kmainTitle_qry:
+					updatePattern=Constants.dynamic_query.update.kmainTitle;
+				break;
+				case Constants.obj_query_cons.kheaderDesc_qry:
+					updatePattern=Constants.dynamic_query.update.kheaderDesc;
+				break;
+				case Constants.obj_query_cons.kbodyDesc_qry:
+					updatePattern=Constants.dynamic_query.update.kbodyDesc;
+				break;
+				case Constants.obj_query_cons.kbannerImg_qry:
+					updatePattern=Constants.dynamic_query.update.kbannerImg;
+				break;
 			}
 			if(updatePattern==null){
 				continue;
@@ -210,7 +222,7 @@ public class ReadWriter {
 										rs.getString(Constants.obj_query_cons.kimg_qry)));
 				}
 				
-				break;
+			break;
 			case Constants.table_query_cons.kusr_table_qry:
 				if(scope_all){
 					while(rs.next()){
@@ -223,7 +235,7 @@ public class ReadWriter {
 											rs.getString(Constants.obj_query_cons.kemail_qry)));
 				}
 				
-				break;
+			break;
 			case Constants.table_query_cons.kpdct_option_table_qry:
 				if(scope_all){
 					while(rs.next()){
@@ -234,7 +246,7 @@ public class ReadWriter {
 					returnObj.add(new ProductOptions(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getString(Constants.obj_query_cons.koptions_qry)));
 				}
 				
-				break;
+			break;
 			case Constants.table_query_cons.kpay_info_qry:
 				if(scope_all){
 					while(rs.next()){
@@ -251,7 +263,13 @@ public class ReadWriter {
 														rs.getString(Constants.obj_query_cons.kaddress_qry)));
 				}
 				
-				break;
+			break;
+			case Constants.table_query_cons.ksitecontent_qry:
+				returnObj.add(rs.getString(Constants.obj_query_cons.kmainTitle_qry));
+				returnObj.add(rs.getString(Constants.obj_query_cons.kheaderDesc_qry));
+				returnObj.add(rs.getString(Constants.obj_query_cons.kbodyDesc_qry));
+				returnObj.add(rs.getString(Constants.obj_query_cons.kbannerImg_qry));
+			break;
 		}
 		
 		return returnObj;

@@ -248,11 +248,11 @@ public class AdminPage extends JPanel {
 
 
         // Main Img(single line)
-        card.add(makeFieldLabel("Main Img"));
+        card.add(makeFieldLabel("Banner Img"));
         card.add(Box.createVerticalStrut(6));
         m_mainImgField = makePlainField("e.g. /dir/img");
         m_mainImgField.setFont(new Font("Serif", Font.BOLD, 15));
-        card.add( m_mainImgField);
+        card.add(m_mainImgField);
         card.add(Box.createVerticalStrut(20));
 
         // Main Title (single line)
@@ -266,14 +266,14 @@ public class AdminPage extends JPanel {
         // Header Description (short, ~2 lines)
         card.add(makeFieldLabel("Header Description"));
         card.add(Box.createVerticalStrut(6));
-        m_headerDescArea = makeTextArea(3, "Short tagline shown beneath the main hero title...");
+        m_headerDescArea = makeTextArea(3,"");
         card.add(scrollWrap(m_headerDescArea, 80));
         card.add(Box.createVerticalStrut(20));
 
         // Body Description (longer, ~5 lines)
         card.add(makeFieldLabel("Body Description"));
         card.add(Box.createVerticalStrut(6));
-        m_bodyDescArea = makeTextArea(6, "Longer description of the restaurant, its story, cuisine style...");
+        m_bodyDescArea = makeTextArea(6,"");
         card.add(scrollWrap(m_bodyDescArea, 130));
         card.add(Box.createVerticalStrut(24));
 
@@ -371,16 +371,16 @@ public class AdminPage extends JPanel {
         String mainImg=m_mainImgField.getText().trim();
 
         if(!mainTitle.isEmpty()) {
-            map.put(Constants.dynamic_query.insert.kmainTitle,mainTitle);
+            map.put(Constants.obj_query_cons.kmainTitle_qry,mainTitle);
         }
         if(!headerDesc.isEmpty()){
-            map.put(Constants.dynamic_query.insert.kheaderDesc,headerDesc);
+            map.put(Constants.obj_query_cons.kheaderDesc_qry,headerDesc);
         }
         if(!bodyDesc.isEmpty()){
-            map.put(Constants.dynamic_query.insert.kbodyDesc,bodyDesc);
+            map.put(Constants.obj_query_cons.kbodyDesc_qry,bodyDesc);
         }
         if(!mainImg.isEmpty()){
-            map.put(Constants.dynamic_query.insert.kimg,mainImg);
+            map.put(Constants.obj_query_cons.kbannerImg_qry,mainImg);
         }
 
         return map;
