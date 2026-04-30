@@ -35,18 +35,22 @@ public class AdminPage extends JPanel {
     private JComboBox<String> actionDropdown;
 
     // ── Content / site fields ────────────────────────────────────────────────
-    private JTextField   mainTitleField;
-    private JTextArea    headerDescArea;
-    private JTextArea    bodyDescArea;
+    private JTextField   m_mainTitleField;
+    private JTextArea    m_headerDescArea;
+    private JTextArea    m_bodyDescArea;
+    private JTextField   m_mainImgField;
 
     // ── Simple in-memory product list (simulate a DB table) ──────────────────
     private final List<String[]> productTable = new ArrayList<>();
-    private       JTextArea      productLog;
+    private JTextArea productLog;
 
     private ProductManager m_pm;
+    private UserManager m_um;
 
-    public AdminPage(ProductManager pm) {
+    public AdminPage(ProductManager pm,UserManager um) {
         m_pm=pm;
+        m_um=um;
+
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(LIGHT_BG);
 
@@ -242,26 +246,35 @@ public class AdminPage extends JPanel {
         card.setAlignmentX(Component.LEFT_ALIGNMENT);
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
 
+
+        // Main Img(single line)
+        card.add(makeFieldLabel("Main Img"));
+        card.add(Box.createVerticalStrut(6));
+        m_mainImgField = makePlainField("e.g. /dir/img");
+        m_mainImgField.setFont(new Font("Serif", Font.BOLD, 15));
+        card.add( m_mainImgField);
+        card.add(Box.createVerticalStrut(20));
+
         // Main Title (single line)
         card.add(makeFieldLabel("Main Title"));
         card.add(Box.createVerticalStrut(6));
-        mainTitleField = makePlainField("e.g. Welcome to LZ Restaurant");
-        mainTitleField.setFont(new Font("Serif", Font.BOLD, 15));
-        card.add(mainTitleField);
+        m_mainTitleField = makePlainField("e.g. Welcome to LZ Restaurant");
+        m_mainTitleField.setFont(new Font("Serif", Font.BOLD, 15));
+        card.add(m_mainTitleField);
         card.add(Box.createVerticalStrut(20));
 
         // Header Description (short, ~2 lines)
         card.add(makeFieldLabel("Header Description"));
         card.add(Box.createVerticalStrut(6));
-        headerDescArea = makeTextArea(3, "Short tagline shown beneath the main hero title...");
-        card.add(scrollWrap(headerDescArea, 80));
+        m_headerDescArea = makeTextArea(3, "Short tagline shown beneath the main hero title...");
+        card.add(scrollWrap(m_headerDescArea, 80));
         card.add(Box.createVerticalStrut(20));
 
         // Body Description (longer, ~5 lines)
         card.add(makeFieldLabel("Body Description"));
         card.add(Box.createVerticalStrut(6));
-        bodyDescArea = makeTextArea(6, "Longer description of the restaurant, its story, cuisine style...");
-        card.add(scrollWrap(bodyDescArea, 130));
+        m_bodyDescArea = makeTextArea(6, "Longer description of the restaurant, its story, cuisine style...");
+        card.add(scrollWrap(m_bodyDescArea, 130));
         card.add(Box.createVerticalStrut(24));
 
         // Save button
@@ -278,7 +291,7 @@ public class AdminPage extends JPanel {
     // SUBMIT HANDLERS
     // ═══════════════════════════════════════════════════════════════════════════
 
-    private HashMap<String,Object> getMap(){
+    private HashMap<String,Object> getProductMap(){
         HashMap<String,Object> map=new HashMap<String,Object>();
         String id       = productIdField.getText().trim();
         String name     = productNameField.getText().trim();
@@ -336,7 +349,7 @@ public class AdminPage extends JPanel {
                 clearProductFields();
             break;
             case "Update":
-                m_pm.runDynamicUpdate(getMap(),Integer.parseInt(id));
+                m_pm.runDynamicUpdate(getProductMap(),Integer.parseInt(id));
                 log("✔  Updated Product, ID: ("+id+")");
             break;
             case "Delete":
@@ -346,25 +359,31 @@ public class AdminPage extends JPanel {
         }
     }
 
-    private void handleContentSave() {
-        String mainTitle   = mainTitleField.getText().trim();
-        String headerDesc  = headerDescArea.getText().trim();
-        String bodyDesc    = bodyDescArea.getText().trim();
+    private void handleContentSave(){
+        m_um.runDynamicUpdate(getSiteContentMap(),1);
+    }
 
-        if (mainTitle.isEmpty()) {
-            JOptionPane.showMessageDialog(this,
-                    "Main Title cannot be empty.",
-                    "Validation Error", JOptionPane.WARNING_MESSAGE);
-            return;
+    private HashMap<String,Object> getSiteContentMap(){
+        HashMap<String,Object> map=new HashMap<String,Object>();
+        String mainTitle   = m_mainTitleField.getText().trim();
+        String headerDesc  = m_headerDescArea.getText().trim();
+        String bodyDesc    = m_bodyDescArea.getText().trim();
+        String mainImg=m_mainImgField.getText().trim();
+
+        if(!mainTitle.isEmpty()) {
+            map.put(Constants.dynamic_query.insert.kmainTitle,mainTitle);
+        }
+        if(!headerDesc.isEmpty()){
+            map.put(Constants.dynamic_query.insert.kheaderDesc,headerDesc);
+        }
+        if(!bodyDesc.isEmpty()){
+            map.put(Constants.dynamic_query.insert.kbodyDesc,bodyDesc);
+        }
+        if(!mainImg.isEmpty()){
+            map.put(Constants.dynamic_query.insert.kimg,mainImg);
         }
 
-        // TODO: persist to DB / config file
-        JOptionPane.showMessageDialog(this,
-                "Content saved successfully!\n\n"
-                + "Title:  " + mainTitle + "\n"
-                + "Header: " + (headerDesc.length() > 60 ? headerDesc.substring(0, 60) + "…" : headerDesc) + "\n"
-                + "Body:   " + (bodyDesc.length() > 60 ? bodyDesc.substring(0, 60) + "…" : bodyDesc),
-                "Content Saved", JOptionPane.INFORMATION_MESSAGE);
+        return map;
     }
 
     // ═══════════════════════════════════════════════════════════════════════════

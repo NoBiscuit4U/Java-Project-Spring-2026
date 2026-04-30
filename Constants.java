@@ -37,6 +37,7 @@ public class Constants {
 		public static final String kusr_table_qry="users";
 		public static final String kpay_info_qry="payment_info";
 		public static final String kadmin_ids_qry="admin_ids";
+		public static final String ksitecontent_qry="sitecontent";
 	}
 
 	public static final class preset_querys{
@@ -58,7 +59,10 @@ public class Constants {
 			public static final String kcost="`Cost`";	
 			public static final String knutritValue="`NutritValue`";	
 			public static final String kimg="`Img`";
-			public static final String kvalues=" VALUES";
+			public static final String kmainTitle="`Main Title`";
+			public static final String kheaderDesc="`Header Description`";
+			public static final String kbodyDesc="`Body Description`";
+			public static final String kbannerImg="`Banner Img`";
 		}
 
 		public static final class update{

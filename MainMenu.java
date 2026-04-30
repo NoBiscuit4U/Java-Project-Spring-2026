@@ -44,7 +44,7 @@ public class MainMenu extends JFrame {
         m_contentPanel=new JPanel(m_cardLayout);
 
         JPanel homePanel=buildBody(header_descrip,body_descrip);
-        m_adminPanel=new AdminPage(m_pm);
+        m_adminPanel=new AdminPage(m_pm,m_um);
         addPage("Home",homePanel);
         addPage("Login",new LoginPage(m_um));
 

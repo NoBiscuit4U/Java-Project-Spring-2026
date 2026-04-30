@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class UserManager {
     private ReadWriter m_rw;
@@ -52,6 +53,10 @@ public class UserManager {
         }else{
             return false;
         }
+    }
+
+    public void runDynamicUpdate(HashMap<String,Object> params,int ID){
+        m_rw.runQuery(Constants.query_cons.kupdateDynamic,Constants.preset_querys.kupdate_pdct_dynamic+Integer.toString(ID),Constants.table_query_cons.kusr_table_qry,params);
     }
 
     public boolean checkUserLogin(int ID,String pass){
