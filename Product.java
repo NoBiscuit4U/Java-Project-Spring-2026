@@ -7,8 +7,6 @@ public class Product{
 	private String m_nutrit_value;
 	private String m_img;
 	
-	private ProductOptions m_options;
-	
 	public Product(String name,int id,double cost,String nutrit_value,String img) {
 		this.m_name=name;
 		this.m_id=id;
@@ -64,9 +62,4 @@ public class Product{
 	public void setImg(String img){
 		this.m_img=img;
 	}
-
-	public void setPdctOptions(ProductOptions options){
-		this.m_options=options;
-	}
-	
 }

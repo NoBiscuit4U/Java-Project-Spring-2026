@@ -10,11 +10,6 @@ public class ProductManager {
         m_productlist=this.getAllProducts();
     }
 
-    private ProductOptions getProductOptions(int ID){
-        return (ProductOptions) m_rw.runQuery(Constants.query_cons.kselect,Constants.preset_querys.kget_unique+Integer.toString(ID),
-                                                    Constants.table_query_cons.kpdct_table_qry,false).get(0);
-    }
-
     private Product getUnique(int ID){
         Product pdct=(Product) m_rw.runQuery(Constants.query_cons.kselect,Constants.preset_querys.kget_unique+Integer.toString(ID),
                                     Constants.table_query_cons.kpdct_table_qry,true).get(0);
@@ -56,9 +51,6 @@ public class ProductManager {
         for(Object obj_pdct:obj_pdcts){
             Product pdct=(Product) obj_pdct;
             try{
-                ProductOptions pdct_opt=this.getProductOptions(pdct.getID());
-
-                pdct.setPdctOptions(pdct_opt);
                 pdct_arr.add(pdct);
             }catch(Exception e) {
                 pdct_arr.add(pdct);

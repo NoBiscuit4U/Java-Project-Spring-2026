@@ -24,9 +24,6 @@ public class Constants {
 		public static final String kpassword_qry="Password";
 		public static final String kimg_qry="Img";
 		public static final String koptions_qry="Options";
-		public static final String kcvv_qry="CVV";
-		public static final String kcardnum_qry="CardNum";
-		public static final String kzipcode_qry="Zipcode";
 		public static final String kphone_qry="Phone";
 		public static final String kaddress_qry="Address";
 		public static final String kmainTitle_qry="Main Title";
@@ -37,7 +34,6 @@ public class Constants {
 
 	public static final class table_query_cons{
 		public static final String kpdct_table_qry="products";
-		public static final String kpdct_option_table_qry="product_options";
 		public static final String kusr_table_qry="users";
 		public static final String kpay_info_qry="payment_info";
 		public static final String kadmin_ids_qry="admin_ids";

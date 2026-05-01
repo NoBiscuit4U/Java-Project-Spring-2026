@@ -236,17 +236,6 @@ public class ReadWriter {
 				}
 				
 			break;
-			case Constants.table_query_cons.kpdct_option_table_qry:
-				if(scope_all){
-					do{
-						returnObj.add(new ProductOptions(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getString(Constants.obj_query_cons.koptions_qry)));
-					}while(rs.next());
-				
-				}else{
-					returnObj.add(new ProductOptions(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getString(Constants.obj_query_cons.koptions_qry)));
-				}
-				
-			break;
 			case Constants.table_query_cons.kpay_info_qry:
 				if(scope_all){
 					do{
