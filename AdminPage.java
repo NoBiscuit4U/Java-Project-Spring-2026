@@ -49,14 +49,29 @@ public class AdminPage extends JPanel {
         m_pm=pm;
         m_um=um;
 
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setLayout(new BorderLayout());
         setBackground(LIGHT_BG);
 
-        add(buildAdminHero());
-        add(buildProductSection());
-        add(buildDivider("Site Content"));
-        add(buildContentSection());
-        add(buildFooter());
+        JPanel pageContent = new JPanel();
+        pageContent.setLayout(new BoxLayout(pageContent, BoxLayout.Y_AXIS));
+        pageContent.setBackground(LIGHT_BG);
+
+        pageContent.add(buildAdminHero());
+        pageContent.add(buildProductSection());
+        pageContent.add(buildDivider("Site Content"));
+        pageContent.add(buildContentSection());
+        pageContent.add(buildFooter());
+
+        JScrollPane pageScrollPane = new JScrollPane(pageContent);
+        pageScrollPane.setBorder(null);
+        pageScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        pageScrollPane.getVerticalScrollBar().setUnitIncrement(16);
+        pageScrollPane.getViewport().setBackground(LIGHT_BG);
+        // Keep this card from advertising a giant preferred height to CardLayout.
+        pageScrollPane.setPreferredSize(new Dimension(0, 0));
+        pageScrollPane.setMinimumSize(new Dimension(0, 0));
+
+        add(pageScrollPane, BorderLayout.CENTER);
     }
 
     // ═══════════════════════════════════════════════════════════════════════════

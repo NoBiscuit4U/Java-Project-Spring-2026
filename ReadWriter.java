@@ -169,7 +169,7 @@ public class ReadWriter {
 			Object obj=params.get(key);
 			String n_obj;
 			if(obj instanceof String){
-				String escaped=((String) obj).replace("'", "''");
+				String escaped=escapeSqlString((String) obj);
 				n_obj="'"+escaped+"'";
 			}else{
 				n_obj=String.valueOf(obj);
@@ -183,6 +183,15 @@ public class ReadWriter {
 		ps.executeUpdate();
 		
 		return returnObj;
+	}
+
+	private String escapeSqlString(String value){
+		if(value==null){
+			return "";
+		}
+		return value
+				.replace("\\", "\\\\")
+				.replace("'", "''");
 	}
 
 	private ArrayList<Object> singleQueryUpdate(String full_query,String target_table) throws ClassNotFoundException,SQLException{
