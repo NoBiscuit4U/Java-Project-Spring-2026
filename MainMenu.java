@@ -10,16 +10,16 @@ import javax.swing.border.*;
 import java.util.Arrays;
 import java.util.ArrayList;
 
-public class MainMenu extends JFrame {
+public class MainMenu extends JFrame{
 
     // Color palette
-    static final Color RED_ACCENT=new Color(220, 60, 60);
-    static final Color DARK_BG=new Color(30, 30, 30);
-    static final Color LIGHT_BG=new Color(248, 248, 248);
-    static final Color CARD_BG=new Color(255, 255, 255);
-    static final Color TEXT_DARK=new Color(30, 30, 30);
-    static final Color TEXT_MUTED=new Color(120, 120, 120);
-    static final Color FOOTER_BG=new Color(210, 55, 55);
+    static final Color RED_ACCENT=new Color(220,60,60);
+    static final Color DARK_BG=new Color(30,30,30);
+    static final Color LIGHT_BG=new Color(248,248,248);
+    static final Color CARD_BG=new Color(255,255,255);
+    static final Color TEXT_DARK=new Color(30,30,30);
+    static final Color TEXT_MUTED=new Color(120,120,120);
+    static final Color FOOTER_BG=new Color(210,55,55);
 
     private ProductManager m_pm;
     private UserManager m_um;
@@ -28,7 +28,7 @@ public class MainMenu extends JFrame {
     private CardLayout m_cardLayout;
     private JPanel m_contentPanel;
     private JPanel m_navLinksPanel;
-    private LinkedHashMap<String, JPanel> m_pages;
+    private LinkedHashMap<String,JPanel>m_pages;
     private JPanel m_root;
     private JPanel m_adminPanel;
     private JPanel m_featuredCardsPanel;
@@ -38,14 +38,14 @@ public class MainMenu extends JFrame {
     private String m_body_descrip;
     private String m_banner_img;
 
-    public MainMenu(ProductManager pm,UserManager um) {
+    public MainMenu(ProductManager pm,UserManager um){
         m_pm=pm;
         m_um=um;
         m_cart=new Cart(1);
 
         loadSiteContent();
 
-        m_navLinksPanel=new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 0));
+        m_navLinksPanel=new JPanel(new FlowLayout(FlowLayout.CENTER,20,0));
         m_navLinksPanel.setOpaque(false);
 
         m_pages=new LinkedHashMap<>();
@@ -62,7 +62,7 @@ public class MainMenu extends JFrame {
         setTitle(m_title);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1050,780);
-        setMinimumSize(new Dimension(900, 650));
+        setMinimumSize(new Dimension(900,650));
         setLocationRelativeTo(null);
 
         m_root=new JPanel(new BorderLayout());
@@ -73,7 +73,7 @@ public class MainMenu extends JFrame {
         JScrollPane scroll=new JScrollPane(m_contentPanel);
         scroll.setBorder(null);
         scroll.getVerticalScrollBar().setUnitIncrement(16);
-        m_root.add(scroll, BorderLayout.CENTER);
+        m_root.add(scroll,BorderLayout.CENTER);
 
         setContentPane(m_root);
         setVisible(true);
@@ -83,7 +83,7 @@ public class MainMenu extends JFrame {
 
     private void loadSiteContent(){
         try{
-            ArrayList<Object> sitecontent=m_um.getSiteContent();
+            ArrayList<Object>sitecontent=m_um.getSiteContent();
             m_title=(String) sitecontent.get(0); 
             m_header_descrip=(String) sitecontent.get(1); 
             m_body_descrip=(String) sitecontent.get(2); 
@@ -112,49 +112,49 @@ public class MainMenu extends JFrame {
 
     // ─── NAV BAR ────────────────────────────────────────────────────────────────
 
-    private JPanel buildNavBar(String title) {
+    private JPanel buildNavBar(String title){
         JPanel nav=new JPanel(new BorderLayout());
         nav.setBackground(DARK_BG);
-        nav.setPreferredSize(new Dimension(0, 56));
-        nav.setBorder(new EmptyBorder(0, 24, 0, 24));
+        nav.setPreferredSize(new Dimension(0,56));
+        nav.setBorder(new EmptyBorder(0,24,0,24));
 
         // Logo
         JLabel logo=new JLabel("✦ "+title);
-        logo.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 20));
+        logo.setFont(new Font("Serif",Font.BOLD|Font.ITALIC,20));
         logo.setForeground(Color.WHITE);
-        nav.add(logo, BorderLayout.WEST);
+        nav.add(logo,BorderLayout.WEST);
         
-        nav.add(m_navLinksPanel, BorderLayout.CENTER);
+        nav.add(m_navLinksPanel,BorderLayout.CENTER);
         refreshNavLinks();
 
         // Social icons (text stand-ins)
-        JPanel socials = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        JPanel socials=new JPanel(new FlowLayout(FlowLayout.RIGHT,8,0));
         socials.setOpaque(false);
-        for (String s : new String[]{"f", "t", "in", "yt"}) {
-            JLabel icon = new JLabel(s.toUpperCase());
-            icon.setFont(new Font("SansSerif", Font.BOLD, 11));
+        for (String s : new String[]{"f","t","in","yt"}){
+            JLabel icon=new JLabel(s.toUpperCase());
+            icon.setFont(new Font("SansSerif",Font.BOLD,11));
             icon.setForeground(Color.WHITE);
             icon.setOpaque(true);
-            icon.setBackground(new Color(80, 80, 80));
-            icon.setPreferredSize(new Dimension(26, 26));
+            icon.setBackground(new Color(80,80,80));
+            icon.setPreferredSize(new Dimension(26,26));
             icon.setHorizontalAlignment(SwingConstants.CENTER);
             icon.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
             socials.add(icon);
         }
-        nav.add(socials, BorderLayout.EAST);
+        nav.add(socials,BorderLayout.EAST);
 
         return nav;
     }
 
-    private void refreshNavLinks() {
+    private void refreshNavLinks(){
         m_navLinksPanel.removeAll();
-        for (String page : m_pages.keySet()) {
-            JLabel lbl = new JLabel(page);
+        for (String page : m_pages.keySet()){
+            JLabel lbl=new JLabel(page);
             lbl.setForeground(Color.WHITE);
             lbl.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-            lbl.addMouseListener(new MouseAdapter() {
+            lbl.addMouseListener(new MouseAdapter(){
                 @Override
-                public void mouseClicked(MouseEvent e) {
+                public void mouseClicked(MouseEvent e){
                     showPage(page);
                 }
             });
@@ -164,23 +164,23 @@ public class MainMenu extends JFrame {
         m_navLinksPanel.repaint();
     }
 
-    public void addPage(String pageName, JPanel pagePanel) {
-        if (pageName == null || pageName.equals("") || pagePanel == null || m_pages.containsKey(pageName)) {
+    public void addPage(String pageName,JPanel pagePanel){
+        if (pageName==null||pageName.equals("")||pagePanel==null||m_pages.containsKey(pageName)){
             return;
         }
-        m_pages.put(pageName, pagePanel);
-        m_contentPanel.add(pagePanel, pageName);
+        m_pages.put(pageName,pagePanel);
+        m_contentPanel.add(pagePanel,pageName);
         refreshNavLinks();
         m_contentPanel.revalidate();
         m_contentPanel.repaint();
     }
 
-    public void removePage(String pageName) {
-        if (pageName == null || pageName.equals("") || "Home".equals(pageName)) {
+    public void removePage(String pageName){
+        if (pageName==null||pageName.equals("")||"Home".equals(pageName)){
             return;
         }
-        JPanel panel = m_pages.remove(pageName);
-        if (panel == null) {
+        JPanel panel=m_pages.remove(pageName);
+        if (panel==null){
             return;
         }
         m_contentPanel.remove(panel);
@@ -190,8 +190,8 @@ public class MainMenu extends JFrame {
         m_contentPanel.repaint();
     }
 
-    public void showPage(String pageName) {
-        if (pageName == null || !m_pages.containsKey(pageName)) {
+    public void showPage(String pageName){
+        if (pageName==null||!m_pages.containsKey(pageName)){
             return;
         }
 
@@ -200,25 +200,22 @@ public class MainMenu extends JFrame {
             ((CartPage) m_pages.get(pageName)).setDeliveryDetails(payInfo.getName(),payInfo.getAddress(),payInfo.getPhone());
         }
 
-        m_cardLayout.show(m_contentPanel, pageName);
+        m_cardLayout.show(m_contentPanel,pageName);
     }
 
     private void handleAddToCart(Product product){
-        if(product == null){
+        if(product==null){
             return;
         }
         m_cart.add_pdcts(product);
-        JOptionPane.showMessageDialog(this,
-                product.getName() + " added to cart.",
-                "Cart Updated",
-                JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(this,product.getName()+" added to cart.","Cart Updated",JOptionPane.INFORMATION_MESSAGE);
     }
 
     // ─── BODY ───────────────────────────────────────────────────────────────────
 
-    private JPanel buildBody() {
-        JPanel body = new JPanel();
-        body.setLayout(new BoxLayout(body, BoxLayout.Y_AXIS));
+    private JPanel buildBody(){
+        JPanel body=new JPanel();
+        body.setLayout(new BoxLayout(body,BoxLayout.Y_AXIS));
         body.setBackground(LIGHT_BG);
 
         body.add(buildHeroBanner());
@@ -230,55 +227,54 @@ public class MainMenu extends JFrame {
 
     // ─── HERO BANNER ────────────────────────────────────────────────────────────
 
-    private JPanel buildHeroBanner() {
+    private JPanel buildHeroBanner(){
         // Gradient panel standing in for a background photo
-        JPanel hero = new JPanel(new GridBagLayout()) {
+        JPanel hero=new JPanel(new GridBagLayout()){
             @Override
-            protected void paintComponent(Graphics g) {
+            protected void paintComponent(Graphics g){
                 super.paintComponent(g);
                 try{
                     File file=new File(m_banner_img);
                     BufferedImage buff_img=ImageIO.read(file);
                     g.drawImage(buff_img,0,0,getWidth(),getHeight(),this);
                 }catch(IOException e){
-                    Graphics2D g2 = (Graphics2D) g;
+                    Graphics2D g2=(Graphics2D) g;
                     // Dark gradient to simulate a dimmed food photo background
-                    GradientPaint gp = new GradientPaint(
-                            0, 0, new Color(40, 20, 10),
-                            getWidth(), getHeight(), new Color(80, 30, 10));
+                    GradientPaint gp=new GradientPaint(
+                            0,0,new Color(40,20,10),getWidth(),getHeight(),new Color(80,30,10));
                     g2.setPaint(gp);
-                    g2.fillRect(0, 0, getWidth(), getHeight());
+                    g2.fillRect(0,0,getWidth(),getHeight());
 
                     // Subtle texture dots
-                    g2.setColor(new Color(255, 255, 255, 15));
-                    for (int x = 0; x < getWidth(); x += 30)
-                        for (int y = 0; y < getHeight(); y += 30)
-                            g2.fillOval(x, y, 3, 3);
+                    g2.setColor(new Color(255,255,255,15));
+                    for (int x=0; x<getWidth(); x+=30)
+                        for (int y=0; y<getHeight(); y+=30)
+                            g2.fillOval(x,y,3,3);
                 }
             }
         };
-        hero.setPreferredSize(new Dimension(0, 320));
-        hero.setMaximumSize(new Dimension(Integer.MAX_VALUE, 320));
+        hero.setPreferredSize(new Dimension(0,320));
+        hero.setMaximumSize(new Dimension(Integer.MAX_VALUE,320));
 
-        JPanel content = new JPanel();
-        content.setLayout(new BoxLayout(content, BoxLayout.Y_AXIS));
+        JPanel content=new JPanel();
+        content.setLayout(new BoxLayout(content,BoxLayout.Y_AXIS));
         content.setOpaque(false);
         content.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel title = new JLabel(m_header_descrip);
-        title.setFont(new Font("Serif", Font.BOLD, 38));
+        JLabel title=new JLabel(m_header_descrip);
+        title.setFont(new Font("Serif",Font.BOLD,38));
         title.setForeground(Color.BLACK);
-        title.setBackground(new Color(255, 255, 255, 100));
+        title.setBackground(new Color(255,255,255,100));
         title.setOpaque(true);
-        title.setBorder(new EmptyBorder(6, 12, 6, 12));
+        title.setBorder(new EmptyBorder(6,12,6,12));
         title.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel subtitle = new JLabel(m_body_descrip);
-        subtitle.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        JLabel subtitle=new JLabel(m_body_descrip);
+        subtitle.setFont(new Font("SansSerif",Font.PLAIN,14));
         subtitle.setForeground(Color.BLACK);
-        subtitle.setBackground(new Color(255, 255, 255, 100));
+        subtitle.setBackground(new Color(255,255,255,100));
         subtitle.setOpaque(true);
-        subtitle.setBorder(new EmptyBorder(4, 10, 4, 10));
+        subtitle.setBorder(new EmptyBorder(4,10,4,10));
         subtitle.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         content.add(title);
@@ -292,22 +288,22 @@ public class MainMenu extends JFrame {
 
     // ─── FEATURED SECTION ───────────────────────────────────────────────────────
 
-    private JPanel buildFeaturedSection() {
-        JPanel section = new JPanel();
-        section.setLayout(new BoxLayout(section, BoxLayout.Y_AXIS));
+    private JPanel buildFeaturedSection(){
+        JPanel section=new JPanel();
+        section.setLayout(new BoxLayout(section,BoxLayout.Y_AXIS));
         section.setBackground(LIGHT_BG);
-        section.setBorder(new EmptyBorder(40, 40, 50, 40));
+        section.setBorder(new EmptyBorder(40,40,50,40));
         section.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Decorative script heading
-        JLabel heading = new JLabel("Featured Products");
-        heading.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 30));
+        JLabel heading=new JLabel("Featured Products");
+        heading.setFont(new Font("Serif",Font.BOLD|Font.ITALIC,30));
         heading.setForeground(RED_ACCENT);
         heading.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Ornament
-        JLabel ornament = new JLabel("— ✦ —");
-        ornament.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        JLabel ornament=new JLabel("— ✦ —");
+        ornament.setFont(new Font("SansSerif",Font.PLAIN,14));
         ornament.setForeground(TEXT_MUTED);
         ornament.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -317,60 +313,60 @@ public class MainMenu extends JFrame {
         section.add(ornament);
         section.add(Box.createVerticalStrut(28));
 
-        m_featuredCardsPanel = new JPanel();
+        m_featuredCardsPanel=new JPanel();
         m_featuredCardsPanel.setOpaque(false);
-        m_featuredCardsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        m_featuredCardsPanel.setLayout(new FlowLayout(FlowLayout.CENTER,0,0));
         m_featuredCardsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
-        m_featuredCardsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        m_featuredCardsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
         section.add(m_featuredCardsPanel);
         renderFeaturedCards();
 
-        section.addComponentListener(new ComponentAdapter() {
+        section.addComponentListener(new ComponentAdapter(){
             @Override
-            public void componentResized(ComponentEvent e) {
+            public void componentResized(ComponentEvent e){
                 renderFeaturedCards();
             }
         });
         return section;
     }
 
-    private int getFeaturedColumnCount() {
-        if (m_featuredCardsPanel == null) {
+    private int getFeaturedColumnCount(){
+        if (m_featuredCardsPanel==null){
             return 3;
         }
-        int width = m_featuredCardsPanel.getWidth();
-        if (width <= 0) {
+        int width=m_featuredCardsPanel.getWidth();
+        if (width<=0){
             return 3;
         }
-        if (width < 560) {
+        if (width<560){
             return 1;
         }
-        if (width < 900) {
+        if (width<900){
             return 2;
         }
         return 3;
     }
 
-    private void renderFeaturedCards() {
-        if (m_featuredCardsPanel == null) {
+    private void renderFeaturedCards(){
+        if (m_featuredCardsPanel==null){
             return;
         }
         m_featuredCardsPanel.removeAll();
 
-        ArrayList<Product> products = m_pm.getProductList();
-        int itemCount = Math.min(3, products.size());
-        if (itemCount == 0) {
+        ArrayList<Product>products=m_pm.getProductList();
+        int itemCount=Math.min(3,products.size());
+        if (itemCount==0){
             m_featuredCardsPanel.revalidate();
             m_featuredCardsPanel.repaint();
             return;
         }
 
-        int cols = Math.min(getFeaturedColumnCount(), itemCount);
-        JPanel cardsGrid = new JPanel(new GridLayout(0, cols, 20, 20));
+        int cols=Math.min(getFeaturedColumnCount(),itemCount);
+        JPanel cardsGrid=new JPanel(new GridLayout(0,cols,20,20));
         cardsGrid.setOpaque(false);
 
-        ArrayList<Product> featured = new ArrayList<Product>(products.subList(0, itemCount));
-        for (Product p : featured) {
+        ArrayList<Product>featured=new ArrayList<Product>(products.subList(0,itemCount));
+        for (Product p : featured){
             cardsGrid.add(buildProductCard(p));
         }
         m_featuredCardsPanel.add(cardsGrid);
@@ -381,14 +377,13 @@ public class MainMenu extends JFrame {
 
     // ─── PRODUCT CARD ───────────────────────────────────────────────────────────
 
-    private JPanel buildProductCard(Product product) {
-        JPanel card = new JPanel(new BorderLayout(0, 0));
+    private JPanel buildProductCard(Product product){
+        JPanel card=new JPanel(new BorderLayout(0,0));
         card.setBackground(CARD_BG);
         card.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(220, 220, 220), 1, true),
-                new EmptyBorder(0, 0, 16, 0)));
+                new LineBorder(new Color(220,220,220),1,true),new EmptyBorder(0,0,16,0)));
 
-        JPanel imgPlaceholder = new JPanel(new GridBagLayout()) {
+        JPanel imgPlaceholder=new JPanel(new GridBagLayout()){
             @Override
             protected void paintComponent(Graphics g){
                 super.paintComponent(g);
@@ -397,39 +392,38 @@ public class MainMenu extends JFrame {
                     BufferedImage buff_img=ImageIO.read(file);
                     g.drawImage(buff_img,0,0,getWidth(),getHeight(),this);
                 }catch(IOException e){
-                    Graphics2D g2 = (Graphics2D) g;
-                    GradientPaint gp = new GradientPaint(
-                            0, 0, new Color(50, 30, 20),
-                            getWidth(), getHeight(), new Color(100, 60, 30));
+                    Graphics2D g2=(Graphics2D) g;
+                    GradientPaint gp=new GradientPaint(
+                            0,0,new Color(50,30,20),getWidth(),getHeight(),new Color(100,60,30));
                     g2.setPaint(gp);
-                    g2.fillRect(0, 0, getWidth(), getHeight());
+                    g2.fillRect(0,0,getWidth(),getHeight());
                 }
 
             }
         };
 
-        imgPlaceholder.setPreferredSize(new Dimension(0, 180));
+        imgPlaceholder.setPreferredSize(new Dimension(0,180));
 
         // Info panel
-        JPanel info = new JPanel();
-        info.setLayout(new BoxLayout(info, BoxLayout.Y_AXIS));
+        JPanel info=new JPanel();
+        info.setLayout(new BoxLayout(info,BoxLayout.Y_AXIS));
         info.setOpaque(false);
-        info.setBorder(new EmptyBorder(14, 16, 0, 16));
+        info.setBorder(new EmptyBorder(14,16,0,16));
 
-        JLabel nameLbl = new JLabel(product.getName());
-        nameLbl.setFont(new Font("SansSerif", Font.BOLD, 14));
+        JLabel nameLbl=new JLabel(product.getName());
+        nameLbl.setFont(new Font("SansSerif",Font.BOLD,14));
         nameLbl.setForeground(RED_ACCENT);
         nameLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel priceLbl = new JLabel(String.format("$%.2f", product.getCost()));
-        priceLbl.setFont(new Font("Serif", Font.BOLD, 24));
+        JLabel priceLbl=new JLabel(String.format("$%.2f",product.getCost()));
+        priceLbl.setFont(new Font("Serif",Font.BOLD,24));
         priceLbl.setForeground(TEXT_DARK);
         priceLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JButton addBtn = makeRedButton("ADD TO CART");
+        JButton addBtn=makeRedButton("ADD TO CART");
         addBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        addBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
-        addBtn.addActionListener(e -> handleAddToCart(product));
+        addBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE,36));
+        addBtn.addActionListener(e->handleAddToCart(product));
 
         info.add(nameLbl);
         info.add(Box.createVerticalStrut(4));
@@ -437,45 +431,45 @@ public class MainMenu extends JFrame {
         info.add(Box.createVerticalStrut(12));
         info.add(addBtn);
 
-        card.add(imgPlaceholder, BorderLayout.NORTH);
-        card.add(info, BorderLayout.CENTER);
+        card.add(imgPlaceholder,BorderLayout.NORTH);
+        card.add(info,BorderLayout.CENTER);
 
         return card;
     }
 
     // ─── FOOTER ─────────────────────────────────────────────────────────────────
 
-    private JPanel buildFooter() {
-        JPanel footer = new JPanel(new GridBagLayout());
+    private JPanel buildFooter(){
+        JPanel footer=new JPanel(new GridBagLayout());
         footer.setBackground(FOOTER_BG);
-        footer.setPreferredSize(new Dimension(0, 46));
-        footer.setMaximumSize(new Dimension(Integer.MAX_VALUE, 46));
+        footer.setPreferredSize(new Dimension(0,46));
+        footer.setMaximumSize(new Dimension(Integer.MAX_VALUE,46));
 
         return footer;
     }
 
     // ─── HELPERS ────────────────────────────────────────────────────────────────
 
-    private JButton makeRedButton(String label) {
-        JButton btn = new JButton(label) {
+    private JButton makeRedButton(String label){
+        JButton btn=new JButton(label){
             @Override
-            protected void paintComponent(Graphics g) {
-                Graphics2D g2 = (Graphics2D) g.create();
-                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                g2.setColor(getModel().isRollover() ? new Color(190, 40, 40) : RED_ACCENT);
-                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 4, 4);
+            protected void paintComponent(Graphics g){
+                Graphics2D g2=(Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getModel().isRollover() ? new Color(190,40,40) : RED_ACCENT);
+                g2.fillRoundRect(0,0,getWidth(),getHeight(),4,4);
                 g2.dispose();
                 super.paintComponent(g);
             }
         };
         btn.setText(label);
-        btn.setFont(new Font("SansSerif", Font.BOLD, 12));
+        btn.setFont(new Font("SansSerif",Font.BOLD,12));
         btn.setForeground(Color.WHITE);
         btn.setContentAreaFilled(false);
         btn.setBorderPainted(false);
         btn.setFocusPainted(false);
         btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        btn.setPreferredSize(new Dimension(160, 38));
+        btn.setPreferredSize(new Dimension(160,38));
         btn.setOpaque(false);
         return btn;
     }

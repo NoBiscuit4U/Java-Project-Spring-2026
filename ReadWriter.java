@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ReadWriter {
-	private static String m_root_url = "jdbc:mysql://localhost:3306/";
+public class ReadWriter{
+	private static String m_root_url="jdbc:mysql://localhost:3306/";
 	private String m_username;
 	private String m_password;
 	private String m_DBName;
@@ -32,9 +32,9 @@ public class ReadWriter {
 		}
 	}
 
-	public ArrayList<Object> runQuery(String query_type,String full_query,String target_table,boolean scope_all) {
+	public ArrayList<Object>runQuery(String query_type,String full_query,String target_table,boolean scope_all){
 		try{
-			switch(query_type) {
+			switch(query_type){
 				case Constants.query_cons.kselect_pass:
 					return this.singleQueryPass(full_query,target_table);
 				case Constants.query_cons.kselect_admin_id:
@@ -58,9 +58,9 @@ public class ReadWriter {
 		return new ArrayList<>();
 	}
 
-	public ArrayList<Object> runQuery(String query_type,String full_query,String target_table,ArrayList<Object> params) {
+	public ArrayList<Object>runQuery(String query_type,String full_query,String target_table,ArrayList<Object>params){
 		try{
-			switch(query_type) {
+			switch(query_type){
 				case "update":
 					return this.paramQuery(full_query,target_table,params);
 				case "insert into":
@@ -82,7 +82,7 @@ public class ReadWriter {
 		return new ArrayList<>();
 	}
 
-	public ArrayList<Object> runQuery(String query_type,String full_query,String target_table,HashMap<String,Object> params) {
+	public ArrayList<Object>runQuery(String query_type,String full_query,String target_table,HashMap<String,Object>params){
 		try{
 			switch(query_type){
 				case "update dynamic":
@@ -102,23 +102,23 @@ public class ReadWriter {
 		return new ArrayList<>();
 	}
 
-	private ArrayList<Object> paramQuery(String full_query,String target_table,ArrayList<Object> params) throws ClassNotFoundException,SQLException{
-		ArrayList<Object> returnObj=new ArrayList<Object>();
+	private ArrayList<Object>paramQuery(String full_query,String target_table,ArrayList<Object>params) throws ClassNotFoundException,SQLException{
+		ArrayList<Object>returnObj=new ArrayList<Object>();
 
 		String format_query=String.format(full_query,target_table);
 		PreparedStatement ps=m_con.prepareStatement(format_query);
 
-		for(int i = 0; i < params.size(); i++) {
-			Object obj = params.get(i);
-			int paramIndex = i + 1;
+		for(int i=0; i<params.size(); i++){
+			Object obj=params.get(i);
+			int paramIndex=i+1;
 			if(obj instanceof String){
-				ps.setString(paramIndex, (String) obj);
+				ps.setString(paramIndex,(String) obj);
 			}else if (obj instanceof Integer){
-				ps.setInt(paramIndex, (Integer) obj);
+				ps.setInt(paramIndex,(Integer) obj);
 			}else if (obj instanceof Double){
-				ps.setDouble(paramIndex, (Double) obj);
+				ps.setDouble(paramIndex,(Double) obj);
 			}else{
-				ps.setObject(paramIndex, obj);
+				ps.setObject(paramIndex,obj);
 			}
 		}
 
@@ -127,8 +127,8 @@ public class ReadWriter {
 		return returnObj;
 	}
 
-	private ArrayList<Object> paramQueryDynamic(String full_query,String target_table,HashMap<String,Object> params) throws ClassNotFoundException,SQLException{
-		ArrayList<Object> returnObj=new ArrayList<Object>();
+	private ArrayList<Object>paramQueryDynamic(String full_query,String target_table,HashMap<String,Object>params) throws ClassNotFoundException,SQLException{
+		ArrayList<Object>returnObj=new ArrayList<Object>();
 		StringBuilder targetFields=new StringBuilder();
 
 		for(String key:params.keySet()){
@@ -190,12 +190,12 @@ public class ReadWriter {
 			return "";
 		}
 		return value
-				.replace("\\", "\\\\")
-				.replace("'", "''");
+				.replace("\\","\\\\")
+				.replace("'","''");
 	}
 
-	private ArrayList<Object> singleQueryUpdate(String full_query,String target_table) throws ClassNotFoundException,SQLException{
-		ArrayList<Object> returnObj=new ArrayList<Object>();
+	private ArrayList<Object>singleQueryUpdate(String full_query,String target_table) throws ClassNotFoundException,SQLException{
+		ArrayList<Object>returnObj=new ArrayList<Object>();
 
 		String format_query=String.format(full_query,target_table);
 		PreparedStatement ps=m_con.prepareStatement(format_query);
@@ -205,12 +205,12 @@ public class ReadWriter {
 		return returnObj;
 	}
 	
-	private ArrayList<Object> singleQueryExecute(String full_query,String target_table,boolean scope_all) throws ClassNotFoundException,SQLException{
-		ArrayList<Object> returnObj=new ArrayList<Object>();
+	private ArrayList<Object>singleQueryExecute(String full_query,String target_table,boolean scope_all) throws ClassNotFoundException,SQLException{
+		ArrayList<Object>returnObj=new ArrayList<Object>();
 		
 		String format_query=String.format(full_query,target_table);
 
-		PreparedStatement ps = m_con.prepareStatement(format_query);
+		PreparedStatement ps=m_con.prepareStatement(format_query);
 		ResultSet rs=ps.executeQuery();
 		if(!rs.next()){
 			return returnObj;
@@ -220,41 +220,33 @@ public class ReadWriter {
 			case Constants.table_query_cons.kpdct_table_qry:
 				if(scope_all){
 					do{
-						returnObj.add(new Product(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
-										rs.getDouble(Constants.obj_query_cons.kcost_qry),rs.getString(Constants.obj_query_cons.knutrit_qry),
-										rs.getString(Constants.obj_query_cons.kimg_qry)));
+						returnObj.add(new Product(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),rs.getDouble(Constants.obj_query_cons.kcost_qry),rs.getString(Constants.obj_query_cons.knutrit_qry),rs.getString(Constants.obj_query_cons.kimg_qry)));
 					}while(rs.next());
 					
 				}else{
-					returnObj.add(new Product(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
-										rs.getDouble(Constants.obj_query_cons.kcost_qry),rs.getString(Constants.obj_query_cons.knutrit_qry),
-										rs.getString(Constants.obj_query_cons.kimg_qry)));
+					returnObj.add(new Product(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),rs.getDouble(Constants.obj_query_cons.kcost_qry),rs.getString(Constants.obj_query_cons.knutrit_qry),rs.getString(Constants.obj_query_cons.kimg_qry)));
 				}
 				
 			break;
 			case Constants.table_query_cons.kusr_table_qry:
 				if(scope_all){
 					do{
-						returnObj.add(new User(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
-												rs.getString(Constants.obj_query_cons.kemail_qry)));
+						returnObj.add(new User(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),rs.getString(Constants.obj_query_cons.kemail_qry)));
 					}while(rs.next());
 				
 				}else{
-					returnObj.add(new User(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
-											rs.getString(Constants.obj_query_cons.kemail_qry)));
+					returnObj.add(new User(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),rs.getString(Constants.obj_query_cons.kemail_qry)));
 				}
 				
 			break;
 			case Constants.table_query_cons.kpay_info_qry:
 				if(scope_all){
 					do{
-						returnObj.add(new PaymentInfo(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getString(Constants.obj_query_cons.kphone_qry),
-						                            rs.getString(Constants.obj_query_cons.kname_qry),rs.getString(Constants.obj_query_cons.kaddress_qry)));
+						returnObj.add(new PaymentInfo(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getString(Constants.obj_query_cons.kphone_qry),rs.getString(Constants.obj_query_cons.kname_qry),rs.getString(Constants.obj_query_cons.kaddress_qry)));
 					}while(rs.next());
 				
 				}else{
-					returnObj.add(new PaymentInfo(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getString(Constants.obj_query_cons.kphone_qry),
-					                            rs.getString(Constants.obj_query_cons.kname_qry),rs.getString(Constants.obj_query_cons.kaddress_qry)));
+					returnObj.add(new PaymentInfo(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getString(Constants.obj_query_cons.kphone_qry),rs.getString(Constants.obj_query_cons.kname_qry),rs.getString(Constants.obj_query_cons.kaddress_qry)));
 				}
 				
 			break;
@@ -269,8 +261,8 @@ public class ReadWriter {
 		return returnObj;
 	}
 
-	private ArrayList<Object> singleQueryPass(String full_query,String target_table) throws ClassNotFoundException,SQLException{
-		ArrayList<Object> returnObj=new ArrayList<Object>();
+	private ArrayList<Object>singleQueryPass(String full_query,String target_table) throws ClassNotFoundException,SQLException{
+		ArrayList<Object>returnObj=new ArrayList<Object>();
 		
 		String format_query=String.format(full_query,target_table);
 		
@@ -284,8 +276,8 @@ public class ReadWriter {
 		return returnObj;
 	}
 
-	private ArrayList<Object> singleQueryAdminID(String full_query,String target_table) throws ClassNotFoundException,SQLException{
-		ArrayList<Object> returnObj=new ArrayList<Object>();
+	private ArrayList<Object>singleQueryAdminID(String full_query,String target_table) throws ClassNotFoundException,SQLException{
+		ArrayList<Object>returnObj=new ArrayList<Object>();
 		
 		String format_query=String.format(full_query,target_table);
 		

@@ -1,4 +1,4 @@
-public class Constants {
+public class Constants{
 	public static final class fp_cons{
 		public static final String kusr_strg="storage/usr_strg.dat";
 		public static final String kproduct_strg="storage/pdct_strg.dat";
@@ -61,7 +61,7 @@ public class Constants {
 
 	public static final class dynamic_query{
 		public static final class update{
-			public static final String kname= "`Name` = %s";	
+			public static final String kname="`Name` = %s";	
 			public static final String kid="`ID` = %s";	
 			public static final String kcost="`Cost` = %s";	
 			public static final String knutritValue="`NutritValue` = %s";	

@@ -6,7 +6,7 @@ public class User{
 	
 	private PaymentInfo m_payinfo;
 	
-	public User(String name,int id,String email) {
+	public User(String name,int id,String email){
 		this.m_name=name;
 		this.m_id=id;
 		this.m_email=email;

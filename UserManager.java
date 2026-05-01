@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class UserManager {
+public class UserManager{
     private ReadWriter m_rw;
     private int session_id=0;
 
@@ -10,8 +10,7 @@ public class UserManager {
     }
 
     private User getUnique(int ID,boolean getPayInfo){
-        User usr=(User) m_rw.runQuery(Constants.query_cons.kselect,Constants.preset_querys.kget_unique+Integer.toString(ID),
-                                    Constants.table_query_cons.kusr_table_qry,false).get(0);
+        User usr=(User) m_rw.runQuery(Constants.query_cons.kselect,Constants.preset_querys.kget_unique+Integer.toString(ID),Constants.table_query_cons.kusr_table_qry,false).get(0);
         if(getPayInfo){
             try{
                 usr.setPayInfo(this.getPaymentInfo(usr.getID()));
@@ -22,20 +21,16 @@ public class UserManager {
     }
 
     private void deleteUser(int ID){
-        m_rw.runQuery(Constants.query_cons.kdelete,Constants.preset_querys.kdelete_obj+Integer.toString(ID),
-                                    Constants.table_query_cons.kusr_table_qry,false);
+        m_rw.runQuery(Constants.query_cons.kdelete,Constants.preset_querys.kdelete_obj+Integer.toString(ID),Constants.table_query_cons.kusr_table_qry,false);
     }
 
     private String getPassword(int ID){
-        return (String) m_rw.runQuery(Constants.query_cons.kselect_pass,Constants.preset_querys.kget_unique+Integer.toString(ID),
-                                    Constants.table_query_cons.kusr_table_qry,false).get(0);
+        return (String) m_rw.runQuery(Constants.query_cons.kselect_pass,Constants.preset_querys.kget_unique+Integer.toString(ID),Constants.table_query_cons.kusr_table_qry,false).get(0);
     }
 
     private PaymentInfo getPaymentInfo(int ID){
         try{
-            ArrayList<Object> result = m_rw.runQuery(Constants.query_cons.kselect,
-                                        Constants.preset_querys.kget_unique+Integer.toString(ID),
-                                        Constants.table_query_cons.kpay_info_qry,false);
+            ArrayList<Object>result=m_rw.runQuery(Constants.query_cons.kselect,Constants.preset_querys.kget_unique+Integer.toString(ID),Constants.table_query_cons.kpay_info_qry,false);
             if(result.isEmpty()){
                 return new PaymentInfo(0,"","","");
             }
@@ -45,16 +40,14 @@ public class UserManager {
         }
     }
 
-    public void updateUser(ArrayList<Object> params){
-        m_rw.runQuery(Constants.query_cons.kupdate,Constants.preset_querys.kupdate_user+Integer.toString((int) params.get(1)),
-                    Constants.table_query_cons.kusr_table_qry,params);
+    public void updateUser(ArrayList<Object>params){
+        m_rw.runQuery(Constants.query_cons.kupdate,Constants.preset_querys.kupdate_user+Integer.toString((int) params.get(1)),Constants.table_query_cons.kusr_table_qry,params);
     }
 
     public boolean checkAdmin(){
         if(this.session_id!=0){
             try{
-                this.m_rw.runQuery(Constants.query_cons.kselect_admin_id,Constants.preset_querys.kget_unique+Integer.toString(this.session_id),
-                                        Constants.table_query_cons.kadmin_ids_qry,false).get(0);
+                this.m_rw.runQuery(Constants.query_cons.kselect_admin_id,Constants.preset_querys.kget_unique+Integer.toString(this.session_id),Constants.table_query_cons.kadmin_ids_qry,false).get(0);
                 return true;
             }catch(Exception e){
                 return false;
@@ -64,11 +57,11 @@ public class UserManager {
         }
     }
 
-    public void runDynamicUpdate(HashMap<String,Object> params,int ID){
+    public void runDynamicUpdate(HashMap<String,Object>params,int ID){
         m_rw.runQuery(Constants.query_cons.kupdateDynamic,Constants.preset_querys.kupdate_content_dynamic+Integer.toString(ID),Constants.table_query_cons.ksitecontent_qry,params);
     }
 
-    public ArrayList<Object> getSiteContent(){
+    public ArrayList<Object>getSiteContent(){
         return m_rw.runQuery(Constants.query_cons.kselect,Constants.preset_querys.kget_sitecontent,Constants.table_query_cons.ksitecontent_qry,true);
     }
 
@@ -91,36 +84,33 @@ public class UserManager {
         }
     }
 
-    public void createPayInfo(ArrayList<Object> params){
+    public void createPayInfo(ArrayList<Object>params){
        if(this.session_id!=0){
-            ArrayList<Object> n_params=new ArrayList<Object>();
+            ArrayList<Object>n_params=new ArrayList<Object>();
 
             n_params.add(session_id);
             n_params.addAll(params);
 
             try{
                 if(this.getPaymentInfo(session_id).getID()==0){
-                    m_rw.runQuery(Constants.query_cons.kinsert,Constants.preset_querys.kinsert_pay_info,
-                        Constants.table_query_cons.kpay_info_qry,n_params);
+                    m_rw.runQuery(Constants.query_cons.kinsert,Constants.preset_querys.kinsert_pay_info,Constants.table_query_cons.kpay_info_qry,n_params);
                 }else{
                     System.out.println("PAYINFO ALREADY EXISTS ID: ");
 
-                    m_rw.runQuery(Constants.query_cons.kupdate,Constants.preset_querys.kupdate_pay_info+Integer.toString(this.session_id),
-                        Constants.table_query_cons.kpay_info_qry,n_params);
+                    m_rw.runQuery(Constants.query_cons.kupdate,Constants.preset_querys.kupdate_pay_info+Integer.toString(this.session_id),Constants.table_query_cons.kpay_info_qry,n_params);
                 }
             }catch(Exception e){};
        }
     }
 
-    public boolean createUser(ArrayList<Object> params){
+    public boolean createUser(ArrayList<Object>params){
         try{
             this.getUnique((int) params.get(1),false);
             System.out.println("USER ALREADY EXISTS ID: "+Integer.toString((int) params.get(1)));
 
             return false;
         }catch(Exception e){
-            m_rw.runQuery(Constants.query_cons.kinsert,Constants.preset_querys.kinsert_user,
-                    Constants.table_query_cons.kusr_table_qry,params);
+            m_rw.runQuery(Constants.query_cons.kinsert,Constants.preset_querys.kinsert_user,Constants.table_query_cons.kusr_table_qry,params);
 
             return true;
         }

@@ -1,9 +1,9 @@
 
-public class PaymentInfo {
+public class PaymentInfo{
 	private String m_phone,m_name,m_home_add;
 	private int m_id;
 	
-	public PaymentInfo(int id,String phone,String name,String home_add) {
+	public PaymentInfo(int id,String phone,String name,String home_add){
 		this.m_id=id;
 		this.m_name=name;
 		this.m_home_add=home_add;

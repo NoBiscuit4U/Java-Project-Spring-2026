@@ -2,19 +2,19 @@ import java.util.ArrayList;
 
 class Cart{
 	
-	private ArrayList<Product> order_items = new ArrayList<Product>();
+	private ArrayList<Product>order_items=new ArrayList<Product>();
 	private double total_cost;
 	private int cart_id;
 	
-	public Cart(int cart_id) {
-		this.cart_id = cart_id;
+	public Cart(int cart_id){
+		this.cart_id=cart_id;
 	}
 	
 	public void add_pdcts(Product pdct){
 		order_items.add(pdct);
 	}
 
-	public ArrayList<Product> getPdcts(){
+	public ArrayList<Product>getPdcts(){
 		return this.order_items;
 	}
 	
@@ -34,15 +34,15 @@ class Cart{
 		this.order_items=new ArrayList<Product>();
 	}
 	
-	public void checkout() {
+	public void checkout(){
 		
 	}
 	
-	public void order_confirm() {
+	public void order_confirm(){
 		
 	}
 	
-	public void payment() {
+	public void payment(){
 		
 	}
 }

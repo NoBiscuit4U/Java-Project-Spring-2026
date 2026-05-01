@@ -7,7 +7,7 @@ public class Product{
 	private String m_nutrit_value;
 	private String m_img;
 	
-	public Product(String name,int id,double cost,String nutrit_value,String img) {
+	public Product(String name,int id,double cost,String nutrit_value,String img){
 		this.m_name=name;
 		this.m_id=id;
 		this.m_cost=cost;
@@ -15,7 +15,7 @@ public class Product{
 		this.m_img=img;
 	}
 
-	public Product(ArrayList<Object> params) {
+	public Product(ArrayList<Object>params){
 		this.m_name=(String) params.get(0);
 		this.m_id=(int) params.get(1);
 		this.m_cost=(double) params.get(2);
