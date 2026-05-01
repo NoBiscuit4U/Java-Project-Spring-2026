@@ -2,6 +2,8 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class LoginPage extends JPanel {
     private UserManager m_um;
@@ -212,8 +214,7 @@ public class LoginPage extends JPanel {
         JButton submitBtn = makeRedButton("Create Account");
         submitBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 42));
         submitBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
-        submitBtn.addActionListener(e -> handleAccountCreation(idField,pwField));
-
+        submitBtn.addActionListener(e -> handleAccountCreation(idField,pwField,nameField,emailField));
 
         card.add(icon);
         card.add(Box.createVerticalStrut(10));
@@ -345,15 +346,28 @@ public class LoginPage extends JPanel {
         this.repaint();
     }
 
-    private void handleAccountCreation(JTextField idField, JTextField pwField) {
+    private void handleAccountCreation(JTextField idField,JTextField pwField,JTextField nameField,JTextField emailField) {
         String id = idField.getText().trim();
         String pw = new String(pwField.getText()).trim();
-        if (id.isEmpty() || pw.isEmpty()) {
+        String name = nameField.getText().trim();
+        String email = emailField.getText().trim();
+        if (id.isEmpty() || pw.isEmpty() || name.isEmpty() || email.isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                "Please enter all the fields.",
+                "Missing Fields", JOptionPane.WARNING_MESSAGE);
+            return;
+        }else{
+            if(m_um.createUser(new ArrayList<Object>(Arrays.asList(name,Integer.parseInt(id),email,pw)))){
+                m_loginCard.setVisible(true);
+                m_createAccountCard.setVisible(false);
+                this.revalidate();
+                this.repaint();
+            }else{
+                JOptionPane.showMessageDialog(this,
+                "User ID already exists.",
+                "User ID Already Exists", JOptionPane.WARNING_MESSAGE);
+            }
         }
-        m_loginCard.setVisible(true);
-        m_createAccountCard.setVisible(false);
-        this.revalidate();
-        this.repaint();
     }
 
 
