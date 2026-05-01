@@ -1,16 +1,29 @@
 
 public class PaymentInfo {
-	private int m_cardnum,m_cvv,m_zipcode,m_id;
-	private String m_expir_date,m_name,m_home_add;
+	private String m_phone,m_name,m_home_add;
+	private int m_id;
 	
-	public PaymentInfo(int id,int cardnum,int cvv,int zipcode,String expir_date,String name,String home_add) {
+	public PaymentInfo(int id,String phone,String name,String home_add) {
 		this.m_id=id;
-		this.m_cardnum=cardnum;
-		this.m_cvv=cvv;
-		this.m_zipcode=zipcode;
-		this.m_expir_date=expir_date;
 		this.m_name=name;
 		this.m_home_add=home_add;
+		this.m_phone=phone;
+	}
+
+	public String getName(){
+		return this.m_name;
+	}
+
+	public String getAddress(){
+		return this.m_home_add;
+	}
+
+	public String getPhone(){
+		return this.m_phone;
+	}
+
+	public int getID(){
+		return m_id;
 	}
 
 }

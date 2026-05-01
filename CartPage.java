@@ -3,6 +3,8 @@ import javax.swing.border.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.ArrayList;
 
 public class CartPage extends JPanel {
 
@@ -26,11 +28,17 @@ public class CartPage extends JPanel {
     private JLabel            lblPromoMsg;
     private JLabel            lblStatus;
 
+    private JTextField m_tfName;
+    private JTextField m_tfAddress;
+    private JTextField m_tfPhone;
+
     private Cart m_cart;
+    private UserManager m_um;
 
     // ── Constructor ───────────────────────────────────────────────────────────
-    public CartPage(Cart cart) {
+    public CartPage(Cart cart,UserManager um) {
         m_cart=cart;
+        m_um=um;
 
         // Try system look-and-feel; fall back gracefully
         try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); }
@@ -116,6 +124,12 @@ public class CartPage extends JPanel {
         orderMenu.add(clear);
 
         return mb;
+    }
+
+    public void setDeliveryDetails(String name,String address,String phone) {
+        m_tfName.setText(name);
+        m_tfAddress.setText(address);
+        m_tfPhone.setText(phone);
     }
 
     // ── Header ────────────────────────────────────────────────────────────────
@@ -245,11 +259,10 @@ public class CartPage extends JPanel {
         Font fldFont = new Font("SansSerif", Font.PLAIN, 13);
 
         String[] lbs = { "Name:", "Address:", "Phone:" };
-        String[] dv  = { "John Smith", "123 Main Street, Apt 4B", "(555) 867-5309" };
         JTextField[] fields = new JTextField[3];
-        tfName    = new JTextField(dv[0], 24); fields[0] = tfName;
-        tfAddress = new JTextField(dv[1], 32); fields[1] = tfAddress;
-        tfPhone   = new JTextField(dv[2], 16); fields[2] = tfPhone;
+        m_tfName    = new JTextField("", 24); fields[0] = m_tfName;
+        m_tfAddress = new JTextField("", 32); fields[1] = m_tfAddress;
+        m_tfPhone   = new JTextField("", 16); fields[2] = m_tfPhone;
 
         for (int i = 0; i < 3; i++) {
             lc.gridx = 0; lc.gridy = i;
@@ -352,20 +365,24 @@ public class CartPage extends JPanel {
                 JOptionPane.WARNING_MESSAGE);
             return;
         }
-        String name = tfName.getText().trim();
-        String addr = tfAddress.getText().trim();
+        String name = m_tfName.getText().trim();
+        String phone= m_tfPhone.getText().trim();
+        String addr = m_tfAddress.getText().trim();
         if (name.isEmpty() || addr.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                 "Please fill in name and address.", "Missing details",
                 JOptionPane.WARNING_MESSAGE);
             return;
         }
+
         JOptionPane.showMessageDialog(this,
             "Order placed for " + name + "!\n"
             + "Delivering to: " + addr + "\n"
             + "Estimated time: 30–45 minutes. Enjoy your meal!",
             "Order Confirmed", JOptionPane.INFORMATION_MESSAGE);
         setStatus("  Order placed successfully for " + name + "!");
+
+        m_um.createPayInfo(new ArrayList<Object>(Arrays.asList(phone,name,addr)));
     }
 
     // ── Utilities ─────────────────────────────────────────────────────────────

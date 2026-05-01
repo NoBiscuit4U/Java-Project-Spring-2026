@@ -40,8 +40,6 @@ public class AdminPage extends JPanel {
     private JTextArea    m_bodyDescArea;
     private JTextField   m_mainImgField;
 
-    // ── Simple in-memory product list (simulate a DB table) ──────────────────
-    private final List<String[]> productTable = new ArrayList<>();
     private JTextArea productLog;
 
     private ProductManager m_pm;

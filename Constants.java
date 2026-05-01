@@ -27,7 +27,7 @@ public class Constants {
 		public static final String kcvv_qry="CVV";
 		public static final String kcardnum_qry="CardNum";
 		public static final String kzipcode_qry="Zipcode";
-		public static final String kexpir_qry="Expiration";
+		public static final String kphone_qry="Phone";
 		public static final String kaddress_qry="Address";
 		public static final String kmainTitle_qry="Main Title";
 		public static final String kheaderDesc_qry="Header Description";
@@ -48,11 +48,16 @@ public class Constants {
 		public static final String kget_unique="SELECT * FROM %s WHERE `ID` = ";
 		public static final String kget_sitecontent="SELECT * FROM %s WHERE 1";
 		public static final String kget_all="SELECT * FROM %s";
+
 		public static final String kdelete_obj="DELETE FROM %s WHERE `ID` = ";
+		
 		public static final String kinsert_user="INSERT INTO %s (`Name`, `ID`, `Email`, `Password`) VALUES (?,?,?,?)";
+		public static final String kinsert_pay_info="INSERT INTO %s (`ID`, `Phone`, `Name`, `Address`) VALUES (?,?,?,?)";
 		public static final String kinsert_pdct="INSERT INTO %s (`Name`, `ID`, `Cost`, `NutritValue`, `Img`) VALUES (?,?,?,?,?)";
+
 		public static final String kupdate_user="UPDATE %s SET Name = ?, ID = ?, Email = ?, Password = ? WHERE ID = ";
 		public static final String kupdate_pdct="UPDATE %s SET Name = ?, ID = ?, Cost = ?, NutritValue = ?, Img = ? WHERE ID = ";
+		public static final String kupdate_pay_info="UPDATE %s SET ID = ?, Phone = ?, Name = ?, Address = ? WHERE ID = ";
 
 		public static final String kupdate_pdct_dynamic="UPDATE %1$s SET %2$s WHERE ID = ";
 		public static final String kupdate_content_dynamic="UPDATE %1$s SET %2$s WHERE ";

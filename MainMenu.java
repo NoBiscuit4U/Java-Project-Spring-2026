@@ -58,7 +58,7 @@ public class MainMenu extends JFrame {
         addPage("Home",homePanel);
         addPage("Login",new LoginPage(m_um));
         addPage("Products",new ProductPage(m_pm.getProductList(),m_cart));
-        addPage("Cart",new CartPage(m_cart));
+        addPage("Cart",new CartPage(m_cart,m_um));
 
         setTitle(m_title);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -195,6 +195,12 @@ public class MainMenu extends JFrame {
         if (pageName == null || !m_pages.containsKey(pageName)) {
             return;
         }
+
+        if(pageName.equals("Cart")){
+            PaymentInfo payInfo=m_um.getCurrentPayInfo();
+            ((CartPage) m_pages.get(pageName)).setDeliveryDetails(payInfo.getName(),payInfo.getAddress(),payInfo.getPhone());
+        }
+
         m_cardLayout.show(m_contentPanel, pageName);
     }
 

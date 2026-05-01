@@ -32,8 +32,17 @@ public class UserManager {
     }
 
     private PaymentInfo getPaymentInfo(int ID){
-        return (PaymentInfo) m_rw.runQuery(Constants.query_cons.kselect,Constants.preset_querys.kget_unique+Integer.toString(ID),
-                                    Constants.table_query_cons.kpay_info_qry,false).get(0);
+        try{
+            ArrayList<Object> result = m_rw.runQuery(Constants.query_cons.kselect,
+                                        Constants.preset_querys.kget_unique+Integer.toString(ID),
+                                        Constants.table_query_cons.kpay_info_qry,false);
+            if(result.isEmpty()){
+                return new PaymentInfo(0,"","","");
+            }
+            return (PaymentInfo) result.get(0);
+        }catch(Exception e){
+            return new PaymentInfo(0,"","","");
+        }
     }
 
     public void updateUser(ArrayList<Object> params){
@@ -72,6 +81,35 @@ public class UserManager {
             System.out.println(e);
             return false;
         }
+    }
+
+    public PaymentInfo getCurrentPayInfo(){
+        if(this.session_id!=0){
+            return this.getPaymentInfo(session_id);
+        }else{
+            return new PaymentInfo(0,"","","");
+        }
+    }
+
+    public void createPayInfo(ArrayList<Object> params){
+       if(this.session_id!=0){
+            ArrayList<Object> n_params=new ArrayList<Object>();
+
+            n_params.add(session_id);
+            n_params.addAll(params);
+
+            try{
+                if(this.getPaymentInfo(session_id).getID()==0){
+                    m_rw.runQuery(Constants.query_cons.kinsert,Constants.preset_querys.kinsert_pay_info,
+                        Constants.table_query_cons.kpay_info_qry,n_params);
+                }else{
+                    System.out.println("PAYINFO ALREADY EXISTS ID: ");
+
+                    m_rw.runQuery(Constants.query_cons.kupdate,Constants.preset_querys.kupdate_pay_info+Integer.toString(this.session_id),
+                        Constants.table_query_cons.kpay_info_qry,n_params);
+                }
+            }catch(Exception e){};
+       }
     }
 
     public boolean createUser(ArrayList<Object> params){

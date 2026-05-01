@@ -204,17 +204,19 @@ public class ReadWriter {
 		String format_query=String.format(full_query,target_table);
 
 		PreparedStatement ps = m_con.prepareStatement(format_query);
-		ResultSet rs=ps.executeQuery(format_query);
-		rs.next();
+		ResultSet rs=ps.executeQuery();
+		if(!rs.next()){
+			return returnObj;
+		}
 		
 		switch(target_table){
 			case Constants.table_query_cons.kpdct_table_qry:
 				if(scope_all){
-					while(rs.next()){
+					do{
 						returnObj.add(new Product(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
 										rs.getDouble(Constants.obj_query_cons.kcost_qry),rs.getString(Constants.obj_query_cons.knutrit_qry),
 										rs.getString(Constants.obj_query_cons.kimg_qry)));
-					}
+					}while(rs.next());
 					
 				}else{
 					returnObj.add(new Product(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
@@ -225,10 +227,10 @@ public class ReadWriter {
 			break;
 			case Constants.table_query_cons.kusr_table_qry:
 				if(scope_all){
-					while(rs.next()){
+					do{
 						returnObj.add(new User(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
 												rs.getString(Constants.obj_query_cons.kemail_qry)));
-					}
+					}while(rs.next());
 				
 				}else{
 					returnObj.add(new User(rs.getString(Constants.obj_query_cons.kname_qry),rs.getInt(Constants.obj_query_cons.kid_qry),
@@ -238,9 +240,9 @@ public class ReadWriter {
 			break;
 			case Constants.table_query_cons.kpdct_option_table_qry:
 				if(scope_all){
-					while(rs.next()){
+					do{
 						returnObj.add(new ProductOptions(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getString(Constants.obj_query_cons.koptions_qry)));
-					}
+					}while(rs.next());
 				
 				}else{
 					returnObj.add(new ProductOptions(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getString(Constants.obj_query_cons.koptions_qry)));
@@ -249,18 +251,14 @@ public class ReadWriter {
 			break;
 			case Constants.table_query_cons.kpay_info_qry:
 				if(scope_all){
-					while(rs.next()){
-						returnObj.add(new PaymentInfo(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getInt(Constants.obj_query_cons.kcardnum_qry),
-														rs.getInt(Constants.obj_query_cons.kcvv_qry),rs.getInt(Constants.obj_query_cons.kzipcode_qry),
-														rs.getString(Constants.obj_query_cons.kexpir_qry),rs.getString(Constants.obj_query_cons.kname_qry),
-														rs.getString(Constants.obj_query_cons.kaddress_qry)));
-					}
+					do{
+						returnObj.add(new PaymentInfo(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getString(Constants.obj_query_cons.kphone_qry),
+						                            rs.getString(Constants.obj_query_cons.kname_qry),rs.getString(Constants.obj_query_cons.kaddress_qry)));
+					}while(rs.next());
 				
 				}else{
-					returnObj.add(new PaymentInfo(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getInt(Constants.obj_query_cons.kcardnum_qry),
-														rs.getInt(Constants.obj_query_cons.kcvv_qry),rs.getInt(Constants.obj_query_cons.kzipcode_qry),
-														rs.getString(Constants.obj_query_cons.kexpir_qry),rs.getString(Constants.obj_query_cons.kname_qry),
-														rs.getString(Constants.obj_query_cons.kaddress_qry)));
+					returnObj.add(new PaymentInfo(rs.getInt(Constants.obj_query_cons.kid_qry),rs.getString(Constants.obj_query_cons.kphone_qry),
+					                            rs.getString(Constants.obj_query_cons.kname_qry),rs.getString(Constants.obj_query_cons.kaddress_qry)));
 				}
 				
 			break;
@@ -281,8 +279,10 @@ public class ReadWriter {
 		String format_query=String.format(full_query,target_table);
 		
 		PreparedStatement ps=m_con.prepareStatement(format_query);
-		ResultSet rs=ps.executeQuery(format_query);
-		rs.next();
+		ResultSet rs=ps.executeQuery();
+		if(!rs.next()){
+			return returnObj;
+		}
 
 		returnObj.add(rs.getString(Constants.obj_query_cons.kpassword_qry));
 		return returnObj;
@@ -294,8 +294,10 @@ public class ReadWriter {
 		String format_query=String.format(full_query,target_table);
 		
 		PreparedStatement ps=m_con.prepareStatement(format_query);
-		ResultSet rs=ps.executeQuery(format_query);
-		rs.next();
+		ResultSet rs=ps.executeQuery();
+		if(!rs.next()){
+			return returnObj;
+		}
 
 		returnObj.add(rs.getInt(Constants.obj_query_cons.kid_qry));
 		return returnObj;
