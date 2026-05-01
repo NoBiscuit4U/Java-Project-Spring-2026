@@ -18,8 +18,8 @@ class Cart{
 		return this.order_items;
 	}
 	
-	public void remove_pdcts(int product_id){
-		order_items.remove(product_id);
+	public void remove_pdcts(int row){
+		order_items.remove(row);
 	}
 
 	public int cartSize(){

@@ -58,6 +58,7 @@ public class MainMenu extends JFrame {
         addPage("Home",homePanel);
         addPage("Login",new LoginPage(m_um));
         addPage("Products",new ProductPage(m_pm.getProductList(),m_cart));
+        addPage("Cart",new CartPage(m_cart));
 
         setTitle(m_title);
         setDefaultCloseOperation(EXIT_ON_CLOSE);

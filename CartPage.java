@@ -1,76 +1,58 @@
 import javax.swing.*;
 import javax.swing.border.*;
-import javax.swing.table.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.text.DecimalFormat;
 
-public class CartPage extends JFrame {
+public class CartPage extends JPanel {
 
-    // ── Data ──────────────────────────────────────────────────────────────────
-    private final Object[][] menuData = {
-        { "Margherita Pizza",    "Pizza",   1, 13.99 },
-        { "Caesar Salad",        "Salad",   2,  7.49 },
-        { "Spaghetti Carbonara", "Pasta",   1, 15.99 },
-        { "Garlic Bread",        "Sides",   3,  3.49 },
-        { "Tiramisu",            "Dessert", 1,  6.99 },
-    };
-
-    private final Object[][] extraItems = {
-        { "Bruschetta",       "Starters", 1,  5.99 },
-        { "Lasagne al Forno", "Pasta",    1, 14.49 },
-        { "Panna Cotta",      "Dessert",  1,  5.49 },
-        { "Sparkling Water",  "Drinks",   2,  2.49 },
-    };
-    private int extraIdx = 0;
+    // Palette (matches MainMenu / LoginPage)
+    static final Color RED_ACCENT = new Color(220, 60, 60);
+    static final Color DARK_BG    = new Color(30, 30, 30);
+    static final Color LIGHT_BG   = new Color(248, 248, 248);
+    static final Color CARD_BG    = new Color(255, 255, 255);
+    static final Color TEXT_DARK  = new Color(30, 30, 30);
+    static final Color TEXT_MUTED = new Color(120, 120, 120);
+    static final Color FOOTER_BG  = new Color(210, 55, 55);
 
     private static final double DELIVERY_FEE = 3.99;
     private static final double TAX_RATE     = 0.08;
     private static final DecimalFormat FMT   = new DecimalFormat("$#,##0.00");
 
     // ── UI components ─────────────────────────────────────────────────────────
-    private DefaultTableModel tableModel;
-    private JTable            cartTable;
+    private CartTablePanel    cartTablePanel;
     private JLabel            lblSubtotal, lblTax, lblTotal, lblItemCount;
     private JTextField        tfName, tfAddress, tfPhone, tfPromo;
     private JLabel            lblPromoMsg;
     private JLabel            lblStatus;
 
+    private Cart m_cart;
+
     // ── Constructor ───────────────────────────────────────────────────────────
-    public CartPage() {
-        super("🍽  Bistro Bella — Shopping Cart");
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(780, 680);
-        setMinimumSize(new Dimension(680, 580));
-        setLocationRelativeTo(null);
+    public CartPage(Cart cart) {
+        m_cart=cart;
 
         // Try system look-and-feel; fall back gracefully
         try { UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName()); }
         catch (Exception ignored) {}
 
-        // ── Root panel ────────────────────────────────────────────────────────
-        JPanel root = new JPanel(new BorderLayout(0, 0));
-        root.setBackground(new Color(245, 241, 232));
-        setContentPane(root);
-
-        // ── Menu bar ──────────────────────────────────────────────────────────
-        setJMenuBar(buildMenuBar());
+        setLayout(new BorderLayout(0, 0));
+        setBackground(LIGHT_BG);
+        setPreferredSize(new Dimension(780, 680));
 
         // ── Centre scroll area ────────────────────────────────────────────────
         JPanel centre = new JPanel();
         centre.setLayout(new BoxLayout(centre, BoxLayout.Y_AXIS));
-        centre.setBackground(new Color(245, 241, 232));
-        centre.setBorder(BorderFactory.createEmptyBorder(12, 14, 12, 14));
+        centre.setBackground(LIGHT_BG);
+        centre.setBorder(BorderFactory.createEmptyBorder(40, 40, 50, 40));
 
         centre.add(buildHeaderPanel());
         centre.add(Box.createVerticalStrut(10));
-        centre.add(buildCartPanel());
+        centre.add(buildCartTableSection());
         centre.add(Box.createVerticalStrut(10));
         centre.add(buildButtonRow());
         centre.add(Box.createVerticalStrut(10));
         centre.add(buildSummaryPanel());
-        centre.add(Box.createVerticalStrut(10));
-        centre.add(buildPromoPanel());
         centre.add(Box.createVerticalStrut(10));
         centre.add(buildDeliveryPanel());
         centre.add(Box.createVerticalStrut(14));
@@ -79,21 +61,37 @@ public class CartPage extends JFrame {
         JScrollPane scroll = new JScrollPane(centre);
         scroll.setBorder(null);
         scroll.getVerticalScrollBar().setUnitIncrement(16);
-        root.add(scroll, BorderLayout.CENTER);
+        add(scroll, BorderLayout.CENTER);
 
         // ── Status bar ────────────────────────────────────────────────────────
-        root.add(buildStatusBar(), BorderLayout.SOUTH);
+        add(buildStatusBar(), BorderLayout.SOUTH);
 
-        // Load initial data and compute totals
-        loadInitialData();
-        refreshTotals();
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentShown(ComponentEvent e) {
+                cartTablePanel.syncFromCart();
+            }
+        });
 
-        setVisible(true);
+        cartTablePanel.syncFromCart();
+    }
+
+    /** Rebuilds the grid from {@link #m_cart}; safe to call after items are added on other pages. */
+    public void refreshFromCart() {
+        cartTablePanel.syncFromCart();
+    }
+
+    /** For embedding in a {@link JFrame}; call {@code frame.setJMenuBar(panel.createMenuBar())}. */
+    public JMenuBar createMenuBar() {
+        return buildMenuBar();
     }
 
     // ── Menu bar ──────────────────────────────────────────────────────────────
     private JMenuBar buildMenuBar() {
         JMenuBar mb = new JMenuBar();
+        mb.setOpaque(true);
+        mb.setBackground(LIGHT_BG);
+        mb.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(230, 230, 230)));
         String[] menus = { "File", "Edit", "Order", "Help" };
         for (String m : menus) {
             JMenu menu = new JMenu(m);
@@ -122,102 +120,56 @@ public class CartPage extends JFrame {
 
     // ── Header ────────────────────────────────────────────────────────────────
     private JPanel buildHeaderPanel() {
-        JPanel p = new JPanel(new BorderLayout());
+        JPanel p = new JPanel();
+        p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
         p.setOpaque(false);
 
-        JLabel title = new JLabel("  Your Order");
-        title.setFont(new Font("SansSerif", Font.BOLD, 16));
-        title.setForeground(new Color(60, 40, 10));
+        JLabel title = new JLabel("Your Order");
+        title.setFont(new Font("Serif", Font.BOLD | Font.ITALIC, 30));
+        title.setForeground(RED_ACCENT);
+        title.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        JLabel ornament = new JLabel("— ✦ —");
+        ornament.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        ornament.setForeground(TEXT_MUTED);
+        ornament.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         lblItemCount = new JLabel("0 items");
-        lblItemCount.setFont(new Font("SansSerif", Font.PLAIN, 12));
-        lblItemCount.setForeground(new Color(120, 90, 40));
-        lblItemCount.setHorizontalAlignment(SwingConstants.RIGHT);
+        lblItemCount.setFont(new Font("SansSerif", Font.PLAIN, 13));
+        lblItemCount.setForeground(TEXT_MUTED);
+        lblItemCount.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        p.add(title,      BorderLayout.WEST);
-        p.add(lblItemCount, BorderLayout.EAST);
+        p.add(title);
+        p.add(Box.createVerticalStrut(6));
+        p.add(ornament);
+        p.add(Box.createVerticalStrut(8));
+        p.add(lblItemCount);
         return p;
     }
 
-    // ── Cart table ────────────────────────────────────────────────────────────
-    private JPanel buildCartPanel() {
-        String[] cols = { "Item", "Category", "Qty", "Unit Price", "Line Total" };
-        tableModel = new DefaultTableModel(cols, 0) {
-            @Override public boolean isCellEditable(int r, int c) { return c == 2; }
-            @Override public Class<?> getColumnClass(int c) {
-                return c == 2 ? Integer.class : (c >= 3 ? Double.class : String.class);
-            }
-        };
-        tableModel.addTableModelListener(e -> refreshTotals());
-
-        cartTable = new JTable(tableModel);
-        cartTable.setRowHeight(28);
-        cartTable.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        cartTable.setSelectionBackground(new Color(196, 150, 60));
-        cartTable.setSelectionForeground(Color.WHITE);
-        cartTable.setGridColor(new Color(220, 210, 190));
-        cartTable.setShowGrid(true);
-
-        // Header style
-        JTableHeader header = cartTable.getTableHeader();
-        header.setFont(new Font("SansSerif", Font.BOLD, 12));
-        header.setBackground(new Color(80, 50, 15));
-        header.setForeground(Color.WHITE);
-        header.setPreferredSize(new Dimension(0, 28));
-
-        // Column widths
-        int[] widths = { 220, 100, 60, 90, 90 };
-        for (int i = 0; i < widths.length; i++)
-            cartTable.getColumnModel().getColumn(i).setPreferredWidth(widths[i]);
-
-        // Right-align numeric columns
-        DefaultTableCellRenderer rightAlign = new DefaultTableCellRenderer() {
-            { setHorizontalAlignment(RIGHT); }
-            @Override
-            public Component getTableCellRendererComponent(JTable t, Object v,
-                    boolean sel, boolean foc, int row, int col) {
-                if (v instanceof Double) v = FMT.format(v);
-                return super.getTableCellRendererComponent(t, v, sel, foc, row, col);
-            }
-        };
-        cartTable.getColumnModel().getColumn(3).setCellRenderer(rightAlign);
-        cartTable.getColumnModel().getColumn(4).setCellRenderer(rightAlign);
-
-        // Center-align qty column
-        DefaultTableCellRenderer center = new DefaultTableCellRenderer();
-        center.setHorizontalAlignment(SwingConstants.CENTER);
-        cartTable.getColumnModel().getColumn(2).setCellRenderer(center);
-
-        // Spinner editor for Qty
-        JSpinner spinner = new JSpinner(new SpinnerNumberModel(1, 1, 99, 1));
-        cartTable.getColumnModel().getColumn(2).setCellEditor(new SpinnerEditor(spinner));
-
-        JScrollPane sp = new JScrollPane(cartTable);
-        sp.setPreferredSize(new Dimension(0, 170));
-        sp.setBorder(BorderFactory.createLineBorder(new Color(160, 130, 80), 1));
-
+    // ── Cart table (shared with ProductPage cart dialog) ─────────────────────
+    private JPanel buildCartTableSection() {
+        cartTablePanel = new CartTablePanel(m_cart);
+        cartTablePanel.setScrollPreferredHeight(200);
+        cartTablePanel.setOnModified(this::refreshTotals);
         JPanel p = new JPanel(new BorderLayout());
         p.setOpaque(false);
-        p.add(sp, BorderLayout.CENTER);
+        p.add(cartTablePanel, BorderLayout.CENTER);
         return p;
     }
 
     // ── Buttons below table ───────────────────────────────────────────────────
     private JPanel buildButtonRow() {
-        JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 6, 0));
+        JPanel p = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         p.setOpaque(false);
 
-        JButton btnRemove = styledButton("Remove Selected", new Color(180, 60, 40));
+        JButton btnRemove = makeOutlineButton("Remove Selected");
         btnRemove.addActionListener(e -> removeSelected());
 
-        JButton btnAdd = styledButton("+ Add Item", new Color(60, 130, 60));
-        btnAdd.addActionListener(e -> addNextItem());
-
-        JButton btnClear = styledButton("Clear Cart", new Color(100, 80, 40));
+        JButton btnClear = makeOutlineButton("Clear Cart");
         btnClear.addActionListener(e -> clearAll());
 
         p.add(btnRemove);
-        p.add(btnAdd);
         p.add(btnClear);
         return p;
     }
@@ -226,7 +178,7 @@ public class CartPage extends JFrame {
     private JPanel buildSummaryPanel() {
         JPanel p = new JPanel(new GridBagLayout());
         p.setBorder(titledBorder("Order Summary"));
-        p.setBackground(new Color(255, 252, 245));
+        p.setBackground(CARD_BG);
 
         GridBagConstraints l = new GridBagConstraints();
         l.anchor = GridBagConstraints.WEST;
@@ -239,16 +191,17 @@ public class CartPage extends JFrame {
         r.gridx = 1; r.gridy = 0;
 
         Font labelFont = new Font("SansSerif", Font.PLAIN, 13);
-        Font valueFont = new Font("Monospaced", Font.PLAIN, 13);
-        Font totalFont = new Font("SansSerif", Font.BOLD, 14);
+        Font valueFont = new Font("SansSerif", Font.PLAIN, 13);
+        Font totalFont = new Font("Serif", Font.BOLD, 22);
 
         String[] labels = { "Subtotal:", "Delivery fee:", "Tax (8%):", "Total:" };
         lblSubtotal = moneyLabel(valueFont);
         JLabel lblDelivery = new JLabel(FMT.format(DELIVERY_FEE));
         lblDelivery.setFont(valueFont);
-        lblTax   = moneyLabel(valueFont);
+        lblDelivery.setForeground(TEXT_DARK);
+        lblTax = moneyLabel(valueFont);
         lblTotal = moneyLabel(totalFont);
-        lblTotal.setForeground(new Color(160, 80, 0));
+        lblTotal.setForeground(RED_ACCENT);
 
         JLabel[] values = { lblSubtotal, lblDelivery, lblTax, lblTotal };
 
@@ -256,14 +209,10 @@ public class CartPage extends JFrame {
             l.gridy = i;
             r.gridy = i;
             JLabel lbl = new JLabel(labels[i]);
-            lbl.setFont(i == 3 ? totalFont : labelFont);
+            lbl.setFont(i == 3 ? new Font("SansSerif", Font.BOLD, 13) : labelFont);
+            lbl.setForeground(i == 3 ? TEXT_DARK : TEXT_MUTED);
             if (i == 3) {
-                JSeparator sep = new JSeparator();
-                GridBagConstraints sc = new GridBagConstraints();
-                sc.gridx = 0; sc.gridy = i; sc.gridwidth = 2;
-                sc.fill = GridBagConstraints.HORIZONTAL;
-                sc.insets = new Insets(4, 8, 4, 8);
-                // insert separator row before Total
+                // Separator row before Total label/value pair
                 GridBagConstraints sl = new GridBagConstraints();
                 sl.gridx = 0; sl.gridy = 3; sl.gridwidth = 2;
                 sl.fill = GridBagConstraints.HORIZONTAL;
@@ -277,34 +226,11 @@ public class CartPage extends JFrame {
         return p;
     }
 
-    // ── Promo panel ───────────────────────────────────────────────────────────
-    private JPanel buildPromoPanel() {
-        JPanel p = new JPanel(new FlowLayout(FlowLayout.LEFT, 8, 6));
-        p.setBorder(titledBorder("Promo Code"));
-        p.setBackground(new Color(255, 252, 245));
-
-        tfPromo = new JTextField(14);
-        tfPromo.setFont(new Font("Monospaced", Font.PLAIN, 13));
-        tfPromo.setToolTipText("Try: BELLA10");
-
-        JButton btnApply = styledButton("Apply", new Color(60, 100, 160));
-        btnApply.addActionListener(e -> applyPromo());
-
-        lblPromoMsg = new JLabel("");
-        lblPromoMsg.setFont(new Font("SansSerif", Font.ITALIC, 12));
-
-        p.add(new JLabel("Code:"));
-        p.add(tfPromo);
-        p.add(btnApply);
-        p.add(lblPromoMsg);
-        return p;
-    }
-
     // ── Delivery panel ────────────────────────────────────────────────────────
     private JPanel buildDeliveryPanel() {
         JPanel p = new JPanel(new GridBagLayout());
         p.setBorder(titledBorder("Delivery Details"));
-        p.setBackground(new Color(255, 252, 245));
+        p.setBackground(CARD_BG);
 
         GridBagConstraints lc = new GridBagConstraints();
         lc.anchor = GridBagConstraints.WEST;
@@ -315,8 +241,8 @@ public class CartPage extends JFrame {
         fc.weightx = 1.0;
         fc.insets = new Insets(4, 0, 4, 12);
 
-        Font f = new Font("SansSerif", Font.PLAIN, 13);
-        Font tf = new Font("Monospaced", Font.PLAIN, 13);
+        Font lblFont = new Font("SansSerif", Font.PLAIN, 13);
+        Font fldFont = new Font("SansSerif", Font.PLAIN, 13);
 
         String[] lbs = { "Name:", "Address:", "Phone:" };
         String[] dv  = { "John Smith", "123 Main Street, Apt 4B", "(555) 867-5309" };
@@ -329,8 +255,10 @@ public class CartPage extends JFrame {
             lc.gridx = 0; lc.gridy = i;
             fc.gridx = 1; fc.gridy = i;
             JLabel lbl = new JLabel(lbs[i]);
-            lbl.setFont(f);
-            fields[i].setFont(tf);
+            lbl.setFont(lblFont);
+            lbl.setForeground(TEXT_MUTED);
+            fields[i].setFont(fldFont);
+            styleFormField(fields[i]);
             p.add(lbl,      lc);
             p.add(fields[i], fc);
         }
@@ -342,22 +270,21 @@ public class CartPage extends JFrame {
         JPanel p = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
         p.setOpaque(false);
 
-        JButton btnCancel = styledButton("Cancel", new Color(130, 60, 40));
+        JButton btnCancel = makeOutlineButton("Cancel");
         btnCancel.addActionListener(e -> {
             int ok = JOptionPane.showConfirmDialog(this,
                 "Discard your order and close?", "Cancel Order",
                 JOptionPane.YES_NO_OPTION);
-            if (ok == JOptionPane.YES_OPTION) System.exit(0);
+            if (ok != JOptionPane.YES_OPTION)
+                return;
+            Window w = SwingUtilities.getWindowAncestor(this);
+            if (w != null)
+                w.dispose();
+            else
+                System.exit(0);
         });
 
-        JButton btnPlace = new JButton("Place Order  ▶");
-        btnPlace.setFont(new Font("SansSerif", Font.BOLD, 13));
-        btnPlace.setBackground(new Color(80, 140, 60));
-        btnPlace.setForeground(Color.WHITE);
-        btnPlace.setFocusPainted(false);
-        btnPlace.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(new Color(50, 100, 40), 1),
-            BorderFactory.createEmptyBorder(6, 18, 6, 18)));
+        JButton btnPlace = makeRedButton("Place Order");
         btnPlace.addActionListener(e -> placeOrder());
 
         p.add(btnCancel);
@@ -368,81 +295,43 @@ public class CartPage extends JFrame {
     // ── Status bar ────────────────────────────────────────────────────────────
     private JPanel buildStatusBar() {
         JPanel p = new JPanel(new BorderLayout(8, 0));
-        p.setBackground(new Color(220, 210, 190));
-        p.setBorder(BorderFactory.createMatteBorder(1, 0, 0, 0, new Color(180, 160, 120)));
-        p.setPreferredSize(new Dimension(0, 24));
+        p.setBackground(FOOTER_BG);
+        p.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        p.setPreferredSize(new Dimension(0, 46));
 
         lblStatus = new JLabel("  Ready");
         lblStatus.setFont(new Font("SansSerif", Font.PLAIN, 12));
+        lblStatus.setForeground(Color.WHITE);
         p.add(lblStatus, BorderLayout.WEST);
 
         JLabel version = new JLabel("Bistro Bella POS v1.0  ");
         version.setFont(new Font("SansSerif", Font.PLAIN, 11));
-        version.setForeground(new Color(120, 100, 60));
+        version.setForeground(new Color(255, 255, 255, 200));
         p.add(version, BorderLayout.EAST);
         return p;
     }
 
     // ── Data helpers ──────────────────────────────────────────────────────────
-    private void loadInitialData() {
-        for (Object[] row : menuData) addRow(row);
-    }
-
-    private void addRow(Object[] row) {
-        String name  = (String)  row[0];
-        String cat   = (String)  row[1];
-        int    qty   = ((Number) row[2]).intValue();
-        double price = ((Number) row[3]).doubleValue();
-        tableModel.addRow(new Object[]{ name, cat, qty, price, price * qty });
-    }
 
     private void refreshTotals() {
-        double sub = 0;
-        int    cnt = 0;
-        for (int i = 0; i < tableModel.getRowCount(); i++) {
-            int    qty   = (Integer) tableModel.getValueAt(i, 2);
-            double price = (Double)  tableModel.getValueAt(i, 3);
-            double line  = qty * price;
-            tableModel.setValueAt(line, i, 4);   // update line total silently
-            sub += line;
-            cnt += qty;
-        }
+        double sub = cartTablePanel.getSubtotal();
+        int cnt = cartTablePanel.getTotalItemCount();
         double tax = sub * TAX_RATE;
         double tot = sub + tax + DELIVERY_FEE;
         lblSubtotal.setText(FMT.format(sub));
         lblTax.setText(FMT.format(tax));
         lblTotal.setText(FMT.format(tot));
         lblItemCount.setText(cnt + " item" + (cnt != 1 ? "s" : "") + " in cart");
-        lblStatus.setText("  Cart updated — " + tableModel.getRowCount() + " product(s)");
+        lblStatus.setText("  Cart updated — " + cartTablePanel.getRowCount() + " product(s)");
     }
 
     private void removeSelected() {
-        int row = cartTable.getSelectedRow();
-        if (row >= 0) {
-            tableModel.removeRow(row);
+        if (cartTablePanel.removeSelected())
             setStatus("Item removed.");
-        } else {
+        else
             JOptionPane.showMessageDialog(this,
                 "Please select a row to remove.", "No selection",
                 JOptionPane.INFORMATION_MESSAGE);
-        }
-    }
-
-    private void addNextItem() {
-        Object[] item = extraItems[extraIdx % extraItems.length];
-        extraIdx++;
-        // check if already in cart
-        String name = (String) item[0];
-        for (int i = 0; i < tableModel.getRowCount(); i++) {
-            if (tableModel.getValueAt(i, 0).equals(name)) {
-                int qty = (Integer) tableModel.getValueAt(i, 2) + 1;
-                tableModel.setValueAt(qty, i, 2);
-                setStatus("\"" + name + "\" qty increased.");
-                return;
-            }
-        }
-        addRow(item);
-        setStatus("\"" + name + "\" added to cart.");
     }
 
     private void clearAll() {
@@ -450,27 +339,14 @@ public class CartPage extends JFrame {
             "Remove all items from cart?", "Clear Cart",
             JOptionPane.YES_NO_OPTION);
         if (ok == JOptionPane.YES_OPTION) {
-            tableModel.setRowCount(0);
+            m_cart.clear();
+            cartTablePanel.syncFromCart();
             setStatus("Cart cleared.");
         }
     }
 
-    private void applyPromo() {
-        String code = tfPromo.getText().trim().toUpperCase();
-        if (code.equals("BELLA10")) {
-            lblPromoMsg.setForeground(new Color(0, 120, 0));
-            lblPromoMsg.setText("10% discount applied!");
-        } else if (code.isEmpty()) {
-            lblPromoMsg.setForeground(new Color(180, 0, 0));
-            lblPromoMsg.setText("Please enter a code.");
-        } else {
-            lblPromoMsg.setForeground(new Color(180, 0, 0));
-            lblPromoMsg.setText("Invalid code. Try BELLA10.");
-        }
-    }
-
     private void placeOrder() {
-        if (tableModel.getRowCount() == 0) {
+        if (cartTablePanel.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                 "Your cart is empty!", "Nothing to order",
                 JOptionPane.WARNING_MESSAGE);
@@ -498,56 +374,79 @@ public class CartPage extends JFrame {
     private JLabel moneyLabel(Font f) {
         JLabel l = new JLabel("$0.00");
         l.setFont(f);
+        l.setForeground(TEXT_DARK);
         l.setHorizontalAlignment(SwingConstants.RIGHT);
         return l;
     }
 
+    private void styleFormField(JTextField field) {
+        field.setForeground(TEXT_DARK);
+        field.setBackground(new Color(252, 249, 247));
+        field.setCaretColor(TEXT_DARK);
+        field.setBorder(BorderFactory.createCompoundBorder(
+                new LineBorder(new Color(210, 200, 195), 1),
+                new EmptyBorder(10, 12, 10, 12)));
+    }
+
     private Border titledBorder(String title) {
         return BorderFactory.createTitledBorder(
-            BorderFactory.createLineBorder(new Color(180, 150, 90), 1),
-            title,
-            TitledBorder.LEFT, TitledBorder.TOP,
-            new Font("SansSerif", Font.BOLD, 12),
-            new Color(100, 70, 20));
+                BorderFactory.createLineBorder(new Color(220, 220, 220), 1, true),
+                title,
+                TitledBorder.LEFT, TitledBorder.TOP,
+                new Font("SansSerif", Font.BOLD, 12),
+                TEXT_MUTED);
     }
 
-    private JButton styledButton(String text, Color fg) {
-        JButton b = new JButton(text);
-        b.setFont(new Font("SansSerif", Font.PLAIN, 12));
-        b.setForeground(fg);
-        b.setFocusPainted(false);
-        b.setBorder(BorderFactory.createCompoundBorder(
-            BorderFactory.createLineBorder(fg.darker(), 1),
-            BorderFactory.createEmptyBorder(4, 12, 4, 12)));
-        return b;
+    private JButton makeRedButton(String label) {
+        JButton btn = new JButton(label) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2.setColor(getModel().isRollover() ? new Color(190, 40, 40) : RED_ACCENT);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 4, 4);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        btn.setFont(new Font("SansSerif", Font.BOLD, 12));
+        btn.setForeground(Color.WHITE);
+        btn.setContentAreaFilled(false);
+        btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btn.setPreferredSize(new Dimension(170, 38));
+        btn.setOpaque(false);
+        return btn;
     }
 
-    // ── Spinner cell editor ───────────────────────────────────────────────────
-    static class SpinnerEditor extends DefaultCellEditor {
-        private final JSpinner spinner;
-        private final JTextField tf;
-
-        SpinnerEditor(JSpinner s) {
-            super(new JTextField());
-            spinner = s;
-            tf = ((JSpinner.DefaultEditor) s.getEditor()).getTextField();
-            tf.addActionListener(this::stopCellEditing);
-        }
-
-        private void stopCellEditing(ActionEvent e) { fireEditingStopped(); }
-
-        @Override public Component getTableCellEditorComponent(
-                JTable table, Object value, boolean isSelected, int row, int col) {
-            spinner.setValue(value instanceof Integer ? value : 1);
-            return spinner;
-        }
-
-        @Override public Object getCellEditorValue() { return spinner.getValue(); }
-        @Override public boolean stopCellEditing() { fireEditingStopped(); return true; }
+    private JButton makeOutlineButton(String label) {
+        JButton btn = new JButton(label) {
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                if (getModel().isRollover())
+                    g2.setColor(new Color(250, 242, 240));
+                else
+                    g2.setColor(CARD_BG);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 6, 6);
+                g2.setColor(RED_ACCENT);
+                g2.setStroke(new BasicStroke(1.5f));
+                g2.drawRoundRect(1, 1, getWidth() - 3, getHeight() - 3, 6, 6);
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+        btn.setFont(new Font("SansSerif", Font.BOLD, 12));
+        btn.setForeground(RED_ACCENT);
+        btn.setContentAreaFilled(false);
+        btn.setBorderPainted(false);
+        btn.setFocusPainted(false);
+        btn.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        btn.setPreferredSize(new Dimension(160, 38));
+        btn.setOpaque(false);
+        return btn;
     }
 
-    // ── Main ──────────────────────────────────────────────────────────────────
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(RestaurantCart::new);
-    }
 }

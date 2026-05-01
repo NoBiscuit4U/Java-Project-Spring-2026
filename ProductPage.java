@@ -407,10 +407,13 @@ public class ProductPage extends JPanel {
     // CART
     // ═══════════════════════════════════════════════════════════════════════════
  
+    private void updateCartBadge() {
+        cartBadge.setText("🛒  Cart: " + m_cart.cartSize() + " item(s)");
+    }
+
     private void addToCart(Product p, JButton btn) {
         m_cart.add_pdcts(p);
-        int count = m_cart.cartSize();
-        cartBadge.setText("🛒  Cart: " + count + " item(s)");
+        updateCartBadge();
  
         // Brief button feedback
         String original = btn.getText();
@@ -431,35 +434,72 @@ public class ProductPage extends JPanel {
                     "Your Cart", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
- 
-        // Build a simple summary table
-        StringBuilder sb = new StringBuilder();
-        sb.append(String.format("%-30s %8s%n", "Product", "Price"));
-        //sb.append("─".repeat(40)).append("\n");
-        double total = 0;
-        for (Product p : m_cart.getPdcts()) {
-            sb.append(String.format("%-30s $%7.2f%n", p.getName(), p.getCost()));
-            total += p.getCost();
-        }
-        //sb.append("─".repeat(40)).append("\n");
-        sb.append(String.format("%-30s $%7.2f%n", "TOTAL", total));
- 
-        JTextArea area = new JTextArea(sb.toString());
-        area.setFont(new Font("Monospaced", Font.PLAIN, 13));
-        area.setEditable(false);
-        area.setBorder(new EmptyBorder(8, 8, 8, 8));
- 
-        int choice = JOptionPane.showOptionDialog(
-                this, new JScrollPane(area), "Your Cart",
-                JOptionPane.YES_NO_OPTION, JOptionPane.PLAIN_MESSAGE, null,
-                new String[]{"Clear Cart", "Close"}, "Close");
- 
-        if (choice == 0) {
-            m_cart.clear();
-            cartBadge.setText("🛒  Cart: 0 item(s)");
-        }
+
+        Window owner = SwingUtilities.getWindowAncestor(this);
+        final JDialog dlg = new JDialog(owner, "Your Cart", Dialog.ModalityType.APPLICATION_MODAL);
+        dlg.getRootPane().setBackground(LIGHT_BG);
+
+        CartTablePanel cartView = new CartTablePanel(m_cart);
+        cartView.setScrollPreferredHeight(280);
+
+        JLabel subtotalLbl = new JLabel("", SwingConstants.RIGHT);
+        subtotalLbl.setFont(new Font("SansSerif", Font.BOLD, 14));
+        subtotalLbl.setForeground(TEXT_DARK);
+        subtotalLbl.setBorder(new EmptyBorder(4, 8, 4, 8));
+
+        cartView.setOnModified(() ->
+                subtotalLbl.setText(String.format("Subtotal: $%.2f", cartView.getSubtotal())));
+        cartView.syncFromCart();
+
+        JPanel south = new JPanel(new BorderLayout(0, 8));
+        south.setOpaque(false);
+        south.add(subtotalLbl, BorderLayout.NORTH);
+
+        JPanel buttons = new JPanel(new FlowLayout(FlowLayout.RIGHT, 8, 0));
+        buttons.setOpaque(false);
+
+        JButton removeSel = makeOutlineButton("Remove Selected");
+        removeSel.setPreferredSize(new Dimension(148, 32));
+        removeSel.addActionListener(e -> {
+            if (cartView.removeSelected())
+                updateCartBadge();
+        });
+
+        JButton clearBtn = makeOutlineButton("Clear Cart");
+        clearBtn.setPreferredSize(new Dimension(120, 32));
+        clearBtn.addActionListener(e -> {
+            int ok = JOptionPane.showConfirmDialog(dlg,
+                    "Remove all items from cart?", "Clear Cart",
+                    JOptionPane.YES_NO_OPTION);
+            if (ok == JOptionPane.YES_OPTION) {
+                m_cart.clear();
+                cartView.syncFromCart();
+                updateCartBadge();
+            }
+        });
+
+        JButton closeBtn = makeRedButton("Close");
+        closeBtn.setPreferredSize(new Dimension(100, 32));
+        closeBtn.addActionListener(e -> dlg.dispose());
+
+        buttons.add(removeSel);
+        buttons.add(clearBtn);
+        buttons.add(closeBtn);
+        south.add(buttons, BorderLayout.SOUTH);
+
+        JPanel shell = new JPanel(new BorderLayout(0, 0));
+        shell.setBackground(LIGHT_BG);
+        shell.setBorder(new EmptyBorder(16, 16, 16, 16));
+        shell.add(cartView, BorderLayout.CENTER);
+        shell.add(south, BorderLayout.SOUTH);
+
+        dlg.setContentPane(shell);
+        dlg.pack();
+        dlg.setMinimumSize(new Dimension(520, 380));
+        dlg.setLocationRelativeTo(owner);
+        dlg.setVisible(true);
     }
- 
+
     // ═══════════════════════════════════════════════════════════════════════════
     // SHARED COMPONENTS
     // ═══════════════════════════════════════════════════════════════════════════
