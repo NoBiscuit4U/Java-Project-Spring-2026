@@ -316,11 +316,6 @@ public class CartPage extends JPanel {
         lblStatus.setFont(new Font("SansSerif", Font.PLAIN, 12));
         lblStatus.setForeground(Color.WHITE);
         p.add(lblStatus, BorderLayout.WEST);
-
-        JLabel version = new JLabel("Bistro Bella POS v1.0  ");
-        version.setFont(new Font("SansSerif", Font.PLAIN, 11));
-        version.setForeground(new Color(255, 255, 255, 200));
-        p.add(version, BorderLayout.EAST);
         return p;
     }
 

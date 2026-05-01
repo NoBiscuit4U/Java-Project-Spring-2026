@@ -3,9 +3,7 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -33,6 +31,7 @@ public class MainMenu extends JFrame {
     private LinkedHashMap<String, JPanel> m_pages;
     private JPanel m_root;
     private JPanel m_adminPanel;
+    private JPanel m_featuredCardsPanel;
 
     private String m_title;
     private String m_header_descrip;
@@ -204,8 +203,15 @@ public class MainMenu extends JFrame {
         m_cardLayout.show(m_contentPanel, pageName);
     }
 
-    private void handleAddToCart(String name){
-        //cart.addm_pm.getProduct(name)
+    private void handleAddToCart(Product product){
+        if(product == null){
+            return;
+        }
+        m_cart.add_pdcts(product);
+        JOptionPane.showMessageDialog(this,
+                product.getName() + " added to cart.",
+                "Cart Updated",
+                JOptionPane.INFORMATION_MESSAGE);
     }
 
     // ─── BODY ───────────────────────────────────────────────────────────────────
@@ -291,6 +297,7 @@ public class MainMenu extends JFrame {
         section.setLayout(new BoxLayout(section, BoxLayout.Y_AXIS));
         section.setBackground(LIGHT_BG);
         section.setBorder(new EmptyBorder(40, 40, 50, 40));
+        section.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         // Decorative script heading
         JLabel heading = new JLabel("Featured Products");
@@ -310,33 +317,71 @@ public class MainMenu extends JFrame {
         section.add(ornament);
         section.add(Box.createVerticalStrut(28));
 
-        // Cards row
-        JPanel cards = new JPanel(new GridLayout(1, 3, 20, 0));
-        cards.setOpaque(false);
-        cards.setMaximumSize(new Dimension(Integer.MAX_VALUE, 340));
-        String[] dishes=new String[3];
-        String[] imgs=new String[3];
-        double[] prices=new double[3];
+        m_featuredCardsPanel = new JPanel();
+        m_featuredCardsPanel.setOpaque(false);
+        m_featuredCardsPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 0));
+        m_featuredCardsPanel.setAlignmentX(Component.CENTER_ALIGNMENT);
+        m_featuredCardsPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+        section.add(m_featuredCardsPanel);
+        renderFeaturedCards();
 
-        List<Product> pdct_list=m_pm.getProductList().subList(0,3);
-        for(int i=0;i<pdct_list.size();i++){
-            Product pdct=pdct_list.get(i);
-            dishes[i]=pdct.getName();
-            imgs[i]=pdct.getImg();
-            prices[i]=pdct.getCost();
-        }
-
-        for (int i = 0; i < 3; i++) {
-            cards.add(buildProductCard(imgs[i],dishes[i], prices[i]));
-        }
-
-        section.add(cards);
+        section.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                renderFeaturedCards();
+            }
+        });
         return section;
+    }
+
+    private int getFeaturedColumnCount() {
+        if (m_featuredCardsPanel == null) {
+            return 3;
+        }
+        int width = m_featuredCardsPanel.getWidth();
+        if (width <= 0) {
+            return 3;
+        }
+        if (width < 560) {
+            return 1;
+        }
+        if (width < 900) {
+            return 2;
+        }
+        return 3;
+    }
+
+    private void renderFeaturedCards() {
+        if (m_featuredCardsPanel == null) {
+            return;
+        }
+        m_featuredCardsPanel.removeAll();
+
+        ArrayList<Product> products = m_pm.getProductList();
+        int itemCount = Math.min(3, products.size());
+        if (itemCount == 0) {
+            m_featuredCardsPanel.revalidate();
+            m_featuredCardsPanel.repaint();
+            return;
+        }
+
+        int cols = Math.min(getFeaturedColumnCount(), itemCount);
+        JPanel cardsGrid = new JPanel(new GridLayout(0, cols, 20, 20));
+        cardsGrid.setOpaque(false);
+
+        ArrayList<Product> featured = new ArrayList<Product>(products.subList(0, itemCount));
+        for (Product p : featured) {
+            cardsGrid.add(buildProductCard(p));
+        }
+        m_featuredCardsPanel.add(cardsGrid);
+
+        m_featuredCardsPanel.revalidate();
+        m_featuredCardsPanel.repaint();
     }
 
     // ─── PRODUCT CARD ───────────────────────────────────────────────────────────
 
-    private JPanel buildProductCard(String img, String name, double price) {
+    private JPanel buildProductCard(Product product) {
         JPanel card = new JPanel(new BorderLayout(0, 0));
         card.setBackground(CARD_BG);
         card.setBorder(BorderFactory.createCompoundBorder(
@@ -348,7 +393,7 @@ public class MainMenu extends JFrame {
             protected void paintComponent(Graphics g){
                 super.paintComponent(g);
                 try{
-                    File file=new File(img);
+                    File file=new File(product.getImg());
                     BufferedImage buff_img=ImageIO.read(file);
                     g.drawImage(buff_img,0,0,getWidth(),getHeight(),this);
                 }catch(IOException e){
@@ -371,12 +416,12 @@ public class MainMenu extends JFrame {
         info.setOpaque(false);
         info.setBorder(new EmptyBorder(14, 16, 0, 16));
 
-        JLabel nameLbl = new JLabel(name);
+        JLabel nameLbl = new JLabel(product.getName());
         nameLbl.setFont(new Font("SansSerif", Font.BOLD, 14));
         nameLbl.setForeground(RED_ACCENT);
         nameLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        JLabel priceLbl = new JLabel(String.format("$%.0f", price));
+        JLabel priceLbl = new JLabel(String.format("$%.2f", product.getCost()));
         priceLbl.setFont(new Font("Serif", Font.BOLD, 24));
         priceLbl.setForeground(TEXT_DARK);
         priceLbl.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -384,7 +429,7 @@ public class MainMenu extends JFrame {
         JButton addBtn = makeRedButton("ADD TO CART");
         addBtn.setAlignmentX(Component.CENTER_ALIGNMENT);
         addBtn.setMaximumSize(new Dimension(Integer.MAX_VALUE, 36));
-        addBtn.addActionListener(e -> handleAddToCart(name));
+        addBtn.addActionListener(e -> handleAddToCart(product));
 
         info.add(nameLbl);
         info.add(Box.createVerticalStrut(4));

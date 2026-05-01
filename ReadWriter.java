@@ -1,10 +1,8 @@
-import java.io.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -23,7 +21,7 @@ public class ReadWriter {
 
 		try{
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			m_con=DriverManager.getConnection(this.m_root_url+this.m_DBName,this.m_username,this.m_password);
+			m_con=DriverManager.getConnection(ReadWriter.m_root_url+this.m_DBName,this.m_username,this.m_password);
 			System.out.println("Connection Established successfully");
 		}catch(ClassNotFoundException e){
 			System.out.println("CLASS ERROR: "+e);

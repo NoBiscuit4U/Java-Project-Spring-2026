@@ -28,7 +28,7 @@ public class ProductPage extends JPanel {
     // ── Internal state ───────────────────────────────────────────────────────
     private ArrayList<Product> products;
     private final JPanel       gridPanel;        // where cards are rendered
-    private final int          COLS = 3;         // cards per row
+    private String             currentFilter = "";
  
     // ── Cart (simple in-memory) ──────────────────────────────────────────────
     private Cart m_cart;
@@ -67,6 +67,13 @@ public class ProductPage extends JPanel {
         scroll.setPreferredSize(new Dimension(0, 420));
         scroll.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
         add(scroll);
+
+        scroll.getViewport().addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                renderProducts();
+            }
+        });
  
         add(buildFooter());
  
@@ -200,7 +207,24 @@ public class ProductPage extends JPanel {
  
     /** Rebuild the grid from the current product list. */
     private void renderProducts() {
-        renderFiltered(products);
+        renderFiltered(getFilteredProducts(currentFilter));
+    }
+
+    private int getResponsiveColumnCount() {
+        int width = gridPanel.getWidth();
+        if (width <= 0) {
+            return 3;
+        }
+        if (width < 560) {
+            return 1;
+        }
+        if (width < 900) {
+            return 2;
+        }
+        if (width < 1280) {
+            return 3;
+        }
+        return 4;
     }
  
     /** Rebuild the grid from a (possibly filtered) subset. */
@@ -210,12 +234,12 @@ public class ProductPage extends JPanel {
         if (list == null || list.isEmpty()) {
             gridPanel.add(buildEmptyState());
         } else {
-            // Chunk into rows of COLS
-            for (int i = 0; i < list.size(); i += COLS) {
-                int end = Math.min(i + COLS, list.size());
+            int cols = getResponsiveColumnCount();
+            for (int i = 0; i < list.size(); i += cols) {
+                int end = Math.min(i + cols, list.size());
                 ArrayList<Product> rowItems = new ArrayList<>(list.subList(i, end));
  
-                JPanel row = new JPanel(new GridLayout(1, COLS, 20, 0));
+                JPanel row = new JPanel(new GridLayout(1, cols, 20, 0));
                 row.setOpaque(false);
                 row.setMaximumSize(new Dimension(Integer.MAX_VALUE, 320));
                 row.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -224,7 +248,7 @@ public class ProductPage extends JPanel {
                     row.add(buildProductCard(p));
                 }
                 // Fill empty slots in the last row so layout stays even
-                for (int k = rowItems.size(); k < COLS; k++) {
+                for (int k = rowItems.size(); k < cols; k++) {
                     row.add(new JPanel() {{ setOpaque(false); }});
                 }
  
@@ -239,9 +263,13 @@ public class ProductPage extends JPanel {
  
     /** Filter products by name or ID (case-insensitive). */
     private void filterProducts(String query) {
-        if (query.isEmpty()) {
-            renderFiltered(products);
-            return;
+        currentFilter = query == null ? "" : query.trim();
+        renderFiltered(getFilteredProducts(currentFilter));
+    }
+
+    private ArrayList<Product> getFilteredProducts(String query) {
+        if (query == null || query.isEmpty()) {
+            return products;
         }
         String q = query.toLowerCase();
         ArrayList<Product> filtered = new ArrayList<>();
@@ -250,7 +278,7 @@ public class ProductPage extends JPanel {
                 filtered.add(p);
             }
         }
-        renderFiltered(filtered);
+        return filtered;
     }
  
     // ─── Empty state ─────────────────────────────────────────────────────────
@@ -510,10 +538,6 @@ public class ProductPage extends JPanel {
         footer.setPreferredSize(new Dimension(0, 46));
         footer.setMaximumSize(new Dimension(Integer.MAX_VALUE, 46));
         footer.setAlignmentX(Component.LEFT_ALIGNMENT);
-        JLabel text = new JLabel("Restaurant WordPress Theme By Luzuk");
-        text.setFont(new Font("SansSerif", Font.PLAIN, 13));
-        text.setForeground(Color.WHITE);
-        footer.add(text);
         return footer;
     }
  
