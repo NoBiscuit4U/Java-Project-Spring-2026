@@ -3,7 +3,6 @@ import java.util.ArrayList;
 class Cart{
 	
 	private ArrayList<Product>order_items=new ArrayList<Product>();
-	private double total_cost;
 	private int cart_id;
 	
 	public Cart(int cart_id){
@@ -33,16 +32,5 @@ class Cart{
 	public void clear(){
 		this.order_items=new ArrayList<Product>();
 	}
-	
-	public void checkout(){
-		
-	}
-	
-	public void order_confirm(){
-		
-	}
-	
-	public void payment(){
-		
-	}
+
 }

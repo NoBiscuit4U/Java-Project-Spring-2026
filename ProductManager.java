@@ -63,6 +63,8 @@ public class ProductManager{
 
     public void runDynamicUpdate(HashMap<String,Object>params,int ID){
         m_rw.runQuery(Constants.query_cons.kupdateDynamic,Constants.preset_querys.kupdate_pdct_dynamic+Integer.toString(ID),Constants.table_query_cons.kpdct_table_qry,params);
+        
+        this.m_productlist=this.getAllProducts();
     }
 
     public ArrayList<String>getDisplayListAll(){

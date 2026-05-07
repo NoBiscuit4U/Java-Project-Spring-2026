@@ -53,10 +53,12 @@ public class MainMenu extends JFrame{
         m_contentPanel=new JPanel(m_cardLayout);
 
         JPanel homePanel=buildBody();
-        m_adminPanel=new AdminPage(m_pm,m_um);
+        ProductPage pdctPage=new ProductPage(m_pm.getProductList(),m_cart);
+
+        m_adminPanel=new AdminPage(m_pm,m_um,pdctPage);
         addPage("Home",homePanel);
         addPage("Login",new LoginPage(m_um));
-        addPage("Products",new ProductPage(m_pm.getProductList(),m_cart));
+        addPage("Products",pdctPage);
         addPage("Cart",new CartPage(m_cart,m_um));
 
         setTitle(m_title);

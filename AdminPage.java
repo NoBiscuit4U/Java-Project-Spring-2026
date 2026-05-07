@@ -37,9 +37,13 @@ public class AdminPage extends JPanel {
     private ProductManager m_pm;
     private UserManager m_um;
 
-    public AdminPage(ProductManager pm,UserManager um){
+    private ProductPage m_productPage;
+
+    public AdminPage(ProductManager pm,UserManager um,ProductPage productPage){
         m_pm=pm;
         m_um=um;
+
+        m_productPage=productPage;
 
         setLayout(new BorderLayout());
         setBackground(LIGHT_BG);
@@ -239,7 +243,7 @@ public class AdminPage extends JPanel {
         card.setLayout(new BoxLayout(card,BoxLayout.Y_AXIS));
         card.setBackground(CARD_BG);
         card.setBorder(BorderFactory.createCompoundBorder(
-                new LineBorder(new Color(220,220,230),1),new EmptyBorder(28,32,28,32)));
+        new LineBorder(new Color(220,220,230),1),new EmptyBorder(28,32,28,32)));
         card.setAlignmentX(Component.LEFT_ALIGNMENT);
         card.setMaximumSize(new Dimension(Integer.MAX_VALUE,Integer.MAX_VALUE));
 
@@ -346,6 +350,7 @@ public class AdminPage extends JPanel {
             break;
             case "Update":
                 m_pm.runDynamicUpdate(getProductMap(),Integer.parseInt(id));
+                m_productPage.setProducts(m_pm.getProductList());
                 log("✔  Updated Product, ID: ("+id+")");
             break;
             case "Delete":
