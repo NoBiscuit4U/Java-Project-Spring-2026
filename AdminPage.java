@@ -347,6 +347,7 @@ public class AdminPage extends JPanel {
                     log("⚠  All Fields must be populated");
                 }
                 clearProductFields();
+                m_productPage.setProducts(m_pm.getProductList());
             break;
             case "Update":
                 m_pm.runDynamicUpdate(getProductMap(),Integer.parseInt(id));
@@ -355,6 +356,7 @@ public class AdminPage extends JPanel {
             break;
             case "Delete":
                 m_pm.deleteProduct(Integer.parseInt(id));
+                m_productPage.setProducts(m_pm.getProductList());
                 log("✔  Deleted Product, ID: ("+id+")");
             break;
         }
